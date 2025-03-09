@@ -1,29 +1,107 @@
-# PetFinder API Data Pipeline
+# :paw_prints: PetFinder API Data Pipeline
 
-# TODO - Google Cloud Storage Bucket using TERRAFORM 
-
-[![Python](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![API](https://img.shields.io/badge/API-PetFinder-green.svg)](https://www.petfinder.com/developers/)
+[![Cloud](https://img.shields.io/badge/Cloud-GCP-blue.svg)](https://cloud.google.com/)
+[![Database](https://img.shields.io/badge/Database-BigQuery-orange.svg)](https://cloud.google.com/bigquery)
+[![Automation](https://img.shields.io/badge/Automation-GitHub_Actions-yellow.svg)](https://github.com/features/actions)
+[![Orchestration](https://img.shields.io/badge/Orchestration-Terraform-purple.svg)](https://www.terraform.io/)
+[![Transformation](https://img.shields.io/badge/Transformation-DBT-red.svg)](https://www.getdbt.com/)
+[![Visualization](https://img.shields.io/badge/Visualization-Looker-pink.svg)](https://cloud.google.com/looker)
 [![Status](https://img.shields.io/badge/Status-Active-green.svg)](https://github.com/)
-[![Docker](https://img.shields.io/badge/Docker-Enabled-blue.svg)](https://www.docker.com/)
 
 
-## Problem Description
+## 📖 Evaluation Criteria as Table of Contents
 
-This project demonstrates the creation of an end-to-end data pipeline using the **PetFinder API** [docs](https://www.petfinder.com/developers/v2/docs/). 
-The pipeline ingests data, processes it, performs transformations, stores it in a data warehouse (BigQuery), 
-and visualizes it in a dashboard. The pipeline uses a combination of **Python**, **CI/CD**, **DBT**, 
-**Google BigQuery**, and **Google Cloud Storage** to automate and scale the data workflow.
+**Based on Project rubric**
+- `Problem description` - [:question: Problem Description](#question-problem-description)
+- `Cloud` - [:cloud: Cloud](#cloud-cloud)
+- `Batch / Workflow orchestration` - [:violin: Batch / Workflow Orchestration](#violin-batch--workflow-orchestration)
+- `Data warehouse` - [Data Warehouse](#data-warehouse)
+- `Transformations` - [Transformations](#transformations)
+- `Dashboard` - [:rocket: Dashboard Visualization](#dashboard)
+- `Reproducibility` - [Reproducibility](#reproducibility)
+- [Pipeline Architecture](#pipeline-architecture)
+- [Technologies Used](#technologies-used)
+- [Setup Instructions](#setup-instructions)
+  - [Data Ingestion](#data-ingestion)
+  - [Data Processing](#data-processing)
+  - [DBT Transformations](#dbt-transformations)
+- [Data Flow](#data-flow)
+- [Running the Pipeline](#running-the-pipeline)
+- [Lessons Learned](#lessons-learned)
 
-I developed a dashboard with two tiles by:
 
-* Using the PetFinder dataset of cats and dogs
-* Creating a pipeline for processing this dataset and putting it into the Google Cloud Bucket datalake using python and IaC terraform
-* Creating a pipeline for moving the data from the lake to a data warehouse using python
-* Transforming the data in the data warehouse: prepare it for the dashboard using dbt and spark
-* Building a dashboard to visualize the data using looker
-* Batch processing is automated to run daily using Github Actions
+## :question: Problem description
+
+The **problem** is the challenge of handling, processing, and visualizing pet adoption data from 
+Pet Finder API [docs](https://www.petfinder.com/developers/v2/docs/) in an automated, 
+scalable, and efficient manner. The **solution** is an end-to-end data pipeline leveraging 
+**Python, CI/CD, DBT, Google BigQuery, and Google Cloud Storage**, with automation via **GitHub Actions**. 
+The key steps include:  
+
+1. **Data Ingestion**: Extracting pet adoption data from the PetFinder API.  
+2. **Storage & Processing**: Using **Google Cloud Storage (GCS) as a data lake** and **Python with Terraform** for automation.  
+3. **Data Warehousing**: Moving processed data from GCS to **Google BigQuery** using Python.  
+4. **Data Transformation**: Using **DBT** to clean, model, and optimize data by processing and transforming the data for meaningful insights using partitioning and clustering. 
+5. **Visualization**: Creating a **Looker dashboard** with 2 tiles of insights on pet adoption trends.  
+6. **Automation**: Using **GitHub Actions** for automated daily batch processing.
+
+## :cloud: Cloud
+
+This project utilizes Google Cloud Platform (GCP) services including Google Cloud Storage (GCS)
+and BigQuery for data storage and processing. This project uses Terraform `Infrastructure as Code (IaC)` to automate 
+the setup and management of cloud resources including the GCP bucket for the data lake.
+### TODO - Google Cloud Storage Bucket using TERRAFORM 
+
+## :violin: Batch / Workflow orchestration
+
+This project uses Github Actions and runs batches daily. The workflow orchestration pipeline is:
+
+- Automatically ingesting daily data from the API into the cloud storage (data lake).
+- Moving data from the data lake to BigQuery (data warehouse).
+- Transforming data using dbt.
+- Visualizing data in Looker.
+
+## Data warehouse
+
+This project uses BigQuery for the data warehouse and the tables are partitioned and clustered 
+in a way that makes sense for the upstream queries (with explanation).
+## TODO partition and cluster and explain
+
+## Transformations 
+
+Transformations are defined with dbt
+## TODO
+
+## :rocket: Dashboard Visualization
+
+TODO Two tiles screenshots
+
+After loading the transformed data into BigQuery, you can create a dashboard to visualize key metrics and trends in pet adoption. For example:
+- **Tile 1**: A bar chart showing the distribution of pets by type.
+- **Tile 2**: A time series chart showing the number of adoptions over time.
+
+You can use **Google Data Studio** or **Metabase** to create and share the dashboard.
+
+Your dashboard should contain at least two tiles, we suggest you include:
+
+- 1 graph that shows the distribution of some categorical data 
+- 1 graph that shows the distribution of the data across a temporal line
+
+Ensure that your graph is easy to understand by adding references and titles.
+
+✅ Search for Pets – Filter by breed, age, size, and location.
+✅ Detailed Pet Profiles – View pet names, breeds, descriptions, and shelter contact information.
+✅ Favorites List – Save pets for later reference.
+✅ Responsive Design – Optimized for both mobile and desktop users.
+
+
+## Reproducibility
+
+Set-up...
+
 
 ## Table of Contents
 - [Project Goal](#goal)
@@ -52,7 +130,6 @@ The goal of this project is to create a scalable and automated data pipeline tha
 
 This pipeline is designed to handle large-scale data, allowing users to analyze pet adoption data for insights.
 
----
 
 ## Data Source
 
@@ -73,7 +150,7 @@ The architecture of the data pipeline involves several components:
 
 ---
 
-## Technologies Used
+## :wrench: Technologies Used
 
 - **Docker**: For containerizing the components of the pipeline, ensuring a consistent environment for data ingestion, processing, and transformations.
 - **Terraform**: Infrastructure as code (IaC)
@@ -380,26 +457,10 @@ FROM
    docker run petfinder-dbt
    ```
 
----
-
-## Visualization
-
-After loading the transformed data into BigQuery, you can create a dashboard to visualize key metrics and trends in pet adoption. For example:
-- **Tile 1**: A bar chart showing the distribution of pets by type.
-- **Tile 2**: A time series chart showing the number of adoptions over time.
-
-You can use **Google Data Studio** or **Metabase** to create and share the dashboard.
-
-Your dashboard should contain at least two tiles, we suggest you include:
-
-- 1 graph that shows the distribution of some categorical data 
-- 1 graph that shows the distribution of the data across a temporal line
-
-Ensure that your graph is easy to understand by adding references and titles.
 
 ---
 
-## Lessons Learned
+## :bulb: Lessons Learned
 
 - **Batch Processing**: Learning how to process large datasets efficiently with Spark was key to handling the PetFinder data at scale.
 - **Containerization**: Docker helped me create isolated environments for each part of the pipeline, making development and deployment much easier.
