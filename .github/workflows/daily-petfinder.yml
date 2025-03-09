@@ -28,7 +28,7 @@ jobs:
           PETFINDER_CLIENT_ID: ${{ secrets.PETFINDER_CLIENT_ID }}
           PETFINDER_CLIENT_SECRET: ${{ secrets.PETFINDER_CLIENT_SECRET }}
           PETFINDER_BUCKET_NAME: ${{ secrets.PETFINDER_BUCKET_NAME }} # Use `secrets.` if private
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
+          GCS_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
         run: python bin/petfinder_data_loader.py
 
 
