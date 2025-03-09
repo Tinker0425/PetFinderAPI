@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: env-file
-          path: .env
+          path: $GITHUB_WORKSPACE/.env
 
       # END
       - name: Clean Up Credentials
