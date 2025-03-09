@@ -23,22 +23,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests google-cloud-storage google-auth pandas
 
-      # TEST
-      - name: Download .env File
-        uses: actions/download-artifact@v4
-        with:
-          name: env-file
-
-      - name: Load Environment Variables
-        run: cat .env >> $GITHUB_ENV
-
-      # END
       - name: Run script
         env:
           PETFINDER_CLIENT_ID: ${{ secrets.PETFINDER_CLIENT_ID }}
           PETFINDER_CLIENT_SECRET: ${{ secrets.PETFINDER_CLIENT_SECRET }}
           # PETFINDER_BUCKET_NAME: ${{ secrets.PETFINDER_BUCKET_NAME }} # Use `secrets.` if private
-          GCS_BUCKET_NAME: ${{ env.GCS_BUCKET_NAME }}
+          # GCS_BUCKET_NAME: ${{ env.GCS_BUCKET_NAME }}
           GCS_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
         run: python bin/petfinder_data_loader.py
 
