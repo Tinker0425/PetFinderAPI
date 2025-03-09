@@ -1,0 +1,33 @@
+name: Terraform GCP Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Authenticate with Google Cloud
+        run: echo "Authenticated with Google Cloud"
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Apply Terraform Configuration
+        env:
+          TF_VAR_google_credentials: ${{ secrets.GCS_CREDENTIALS }}
+        run: terraform apply -auto-approve
