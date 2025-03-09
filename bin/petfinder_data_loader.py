@@ -136,7 +136,7 @@ def main():
     # Load secrets from environment variables
     client_id = os.getenv("PETFINDER_CLIENT_ID")
     client_secret = os.getenv("PETFINDER_CLIENT_SECRET")
-    bucket_name = os.getenv("GCS_BUCKET_NAME")
+    bucket_name = "myapi-petfinder-data"
     credentials_json = os.getenv("GCS_CREDENTIALS")
 
     if not client_id or not client_secret or not bucket_name or not credentials_json:

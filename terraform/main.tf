@@ -15,7 +15,7 @@ provider "google" {
 
 # Create GCS Bucket
 resource "google_storage_bucket" "petfinder_bucket" {
-  name          = "${jsondecode(var.gcs_credentials)["project_id"]}-petfinder-data"
+  name          = "petfinderapi-petfinder-data"
   location      = var.region
   force_destroy = true
 }

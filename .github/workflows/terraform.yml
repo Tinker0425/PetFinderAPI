@@ -36,7 +36,6 @@ jobs:
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
         run: cd terraform && terraform apply -auto-approve
 
-      # END
       - name: Clean Up Credentials
         if: always()
         run: rm -f credentials.json
