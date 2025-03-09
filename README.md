@@ -1,6 +1,6 @@
 # :paw_prints: PetFinder API Data Pipeline
 
-[![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.12.6-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![API](https://img.shields.io/badge/API-PetFinder-green.svg)](https://www.petfinder.com/developers/)
 [![Cloud](https://img.shields.io/badge/Cloud-GCP-blue.svg)](https://cloud.google.com/)
@@ -11,25 +11,18 @@
 [![Visualization](https://img.shields.io/badge/Visualization-Looker-pink.svg)](https://cloud.google.com/looker)
 [![Status](https://img.shields.io/badge/Status-Active-green.svg)](https://github.com/)
 
-
 ## 📖 Evaluation Criteria as Table of Contents
 
 **Based on Project rubric**
-- `Problem description` - [:question: Problem Description](#question-problem-description)
-- `Cloud` - [:cloud: Cloud](#cloud-cloud)
-- `Batch / Workflow orchestration` - [:violin: Batch / Workflow Orchestration](#violin-batch--workflow-orchestration)
-- `Data warehouse` - [Data Warehouse](#data-warehouse)
-- `Transformations` - [Transformations](#transformations)
-- `Dashboard` - [:rocket: Dashboard Visualization](#dashboard)
-- `Reproducibility` - [Reproducibility](#reproducibility)
+- [:question: Problem Description](#question-problem-description)
+- [:cloud: Cloud](#cloud-cloud)
+- [:violin: Batch / Workflow Orchestration](#violin-batch--workflow-orchestration)
+- [Data Warehouse](#data-warehouse)
+- [Transformations](#transformations)
+- [:rocket: Dashboard Visualization](#dashboard)
+- [:recycle: Reproducibility / Setup Instructions](#reproducibility)
 - [Pipeline Architecture](#pipeline-architecture)
 - [Technologies Used](#technologies-used)
-- [Setup Instructions](#setup-instructions)
-  - [Data Ingestion](#data-ingestion)
-  - [Data Processing](#data-processing)
-  - [DBT Transformations](#dbt-transformations)
-- [Data Flow](#data-flow)
-- [Running the Pipeline](#running-the-pipeline)
 - [Lessons Learned](#lessons-learned)
 
 
@@ -39,14 +32,20 @@ The **problem** is the challenge of handling, processing, and visualizing pet ad
 Pet Finder API [docs](https://www.petfinder.com/developers/v2/docs/) in an automated, 
 scalable, and efficient manner. The **solution** is an end-to-end data pipeline leveraging 
 **Python, CI/CD, DBT, Google BigQuery, and Google Cloud Storage**, with automation via **GitHub Actions**. 
-The key steps include:  
 
-1. **Data Ingestion**: Extracting pet adoption data from the PetFinder API.  
+The architecture of the data pipeline involves several components:
+
+1. **Data Ingestion**: Extracting pet adoption data from the PetFinder API using Python. 
 2. **Storage & Processing**: Using **Google Cloud Storage (GCS) as a data lake** and **Python with Terraform** for automation.  
 3. **Data Warehousing**: Moving processed data from GCS to **Google BigQuery** using Python.  
 4. **Data Transformation**: Using **DBT** to clean, model, and optimize data by processing and transforming the data for meaningful insights using partitioning and clustering. 
-5. **Visualization**: Creating a **Looker dashboard** with 2 tiles of insights on pet adoption trends.  
+5. **Visualization**: Creating a **Google Data Studio Looker dashboard** with 2 tiles of insights on pet adoption trends.  
 6. **Automation**: Using **GitHub Actions** for automated daily batch processing.
+
+# TODO IMAGE of FLOW
+User clone, create PetFinder API and add secrets, create GCP project and service account and add secrets. Then run terraform
+action yml to create bucket and bigquery, then action daily run will add csv to bucket and data to bigquery.
+TODO - This will then run dbt for transformations, then looker
 
 ## :cloud: Cloud
 
@@ -74,6 +73,51 @@ in a way that makes sense for the upstream queries (with explanation).
 
 Transformations are defined with dbt
 ## TODO
+### DBT Transformations
+
+1. The **DBT** transformations take place in **BigQuery**, where raw data is cleaned and prepared for analysis.
+
+Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
+
+DBT Example of partitioning and clustering:
+
+```SQL
+
+-- models/pet_adoption_model.sql
+{{ 
+  config(
+    materialized='table',
+    partition_by={"field": "adopted_at", "type": "DATE"},
+    cluster_by=["adoption_center", "breed"]
+  )
+}}
+
+WITH pet_adoptions AS (
+  SELECT
+    pet_id,
+    pet_name,
+    breed,
+    adoption_center,
+    adopted_at
+  FROM
+    raw.pet_adoptions
+  WHERE
+    adopted_at >= '2023-01-01'
+)
+
+SELECT
+  pet_id,
+  pet_name,
+  breed,
+  adoption_center,
+  adopted_at
+FROM
+  pet_adoptions
+
+
+```
+
+
 
 ## :rocket: Dashboard Visualization
 
@@ -83,9 +127,9 @@ After loading the transformed data into BigQuery, you can create a dashboard to 
 - **Tile 1**: A bar chart showing the distribution of pets by type.
 - **Tile 2**: A time series chart showing the number of adoptions over time.
 
-You can use **Google Data Studio** or **Metabase** to create and share the dashboard.
+**Google Data Studio** to create and share the dashboard.
 
-Your dashboard should contain at least two tiles, we suggest you include:
+Two tiles:
 
 - 1 graph that shows the distribution of some categorical data 
 - 1 graph that shows the distribution of the data across a temporal line
@@ -98,106 +142,16 @@ Ensure that your graph is easy to understand by adding references and titles.
 ✅ Responsive Design – Optimized for both mobile and desktop users.
 
 
-## Reproducibility
+## :recycle: Reproducibility / Setup Instructions
 
-Set-up...
+### **API Key and Access Token Setup**
 
-
-## Table of Contents
-- [Project Goal](#goal)
-- [Data Source](#data-source)
-- [Pipeline Architecture](#pipeline-architecture)
-- [Technologies Used](#technologies-used)
-- [Setup Instructions](#setup-instructions)
-  - [Docker](#docker)
-  - [Data Ingestion](#data-ingestion)
-  - [Data Processing](#data-processing)
-  - [DBT Transformations](#dbt-transformations)
-- [Data Flow](#data-flow)
-- [Running the Pipeline](#running-the-pipeline)
-- [Visualization](#visualization)
-- [Lessons Learned](#lessons-learned)
-
----
-
-## Goal
-
-The goal of this project is to create a scalable and automated data pipeline that:
-1. Ingests data daily from the **PetFinder API**.
-2. Processes the data using **Spark**.
-3. Transforms and loads it into **BigQuery** using **DBT**.
-4. Visualizes the data in a dashboard.
-
-This pipeline is designed to handle large-scale data, allowing users to analyze pet adoption data for insights.
-
-
-## Data Source
+Data Source
 
 The data is sourced from the **PetFinder API**, which provides information about adoptable pets from various organizations. 
 The dataset includes details such as pet names, types, ages, breeds, and adoption statuses.
 
 - PetFinder API documentation: [PetFinder API Documentation](https://www.petfinder.com/developers/)
-
----
-
-## Pipeline Architecture
-
-The architecture of the data pipeline involves several components:
-1. **Data Ingestion**: A Python script fetches data from the PetFinder API and stores it in **Google Cloud Storage**.
-2. **Data Processing**: The ingested data is processed using **Apache Spark** to clean, transform, and aggregate it.
-3. **Transformations**: **DBT** is used for further transformations of the processed data in **BigQuery**.
-4. **Visualization**: Data is visualized using a dashboard tool (e.g., Google Data Studio or Metabase).
-
----
-
-## :wrench: Technologies Used
-
-- **Docker**: For containerizing the components of the pipeline, ensuring a consistent environment for data ingestion, processing, and transformations.
-- **Terraform**: Infrastructure as code (IaC)
-- **Apache Spark**: For batch processing of large datasets.
-- **DBT**: For performing SQL-based transformations on the data in BigQuery.
-- **Google Cloud Storage (GCS)**: For storing raw data before and after processing.
-- **BigQuery Data Warehouse**: For storing processed and transformed data in a data warehouse.
-- **Visualization Tools**: Google Data Studio Looker
-- **Python**: For writing scripts to handle data ingestion.
-
-
-* **Workflow orchestration**: Airflow, Prefect, Luigi, ...
-* **Batch processing**: Spark, Flink, AWS Batch, ...
-* **Stream processing**: Kafka, Pulsar, Kinesis, ...
-
----
-
-## Setup Instructions
-
-### **Clone/Fork My Repo in Gihub**
-
-1. **Fork/Clone the repository**:
-   - Clone the repository to your local machine or fork it to your GitHub account.
-
-2. **Set up secrets**:
-   - Go to the repository's **Settings** > **Secrets and variables** > **Actions**.
-   - Add the following secrets:
-     - `GCP_CREDENTIALS`: Google Cloud credentials file (as a JSON string).
-     - `PETFINDER_API_KEY`: PetFinder API key.
-     - `PETFINDER_API_ID`: PetFinder API ID.
-
-3. **Ensure dependencies are listed** in the `requirements.txt` file:
-   - Make sure the `requirements.txt` file includes all the required dependencies for the project.
-   - Install dependencies via the following command:
-     ```bash
-     pip install -r requirements.txt
-     ```
-
-4. **Review the README**:
-   - Go through the README for any specific environment setup or instructions related to the cloud environment and the pipeline.
-
-5. **Wait for the Action to Run**:
-   - The scheduled GitHub Action will automatically trigger according to the defined schedule (e.g., daily at midnight UTC).
-   - Alternatively, the action can be manually triggered via the **GitHub Actions tab** in the repository.
-
-
-### **API Key and Access Token Setup**
 
 To use the PetFinder API, you need to obtain your **API key** and **API secret** from PetFinder. Here's how to get them:
 
@@ -251,7 +205,34 @@ To use the PetFinder API, you need to obtain your **API key** and **API secret**
 - Make sure not to share your **API key** and **secret** publicly to avoid unauthorized access.
 
 
-### Steps to Create a Google Cloud Storage Bucket
+### **Clone/Fork This Repo in Gihub**
+
+1. **Fork/Clone the repository**:
+   - Fork it to your GitHub account.
+   - This is mandatory, as I use CI/CD Github Actions
+
+2. **Set up secrets**:
+   - Go to the repository's **Settings** > **Secrets and variables** > **Actions**.
+   - Add the following secrets:
+     - `GCP_CREDENTIALS`: Google Cloud credentials file (as a JSON string).
+     - `PETFINDER_API_KEY`: PetFinder API key.
+     - `PETFINDER_API_ID`: PetFinder API ID.
+
+3. **Ensure dependencies are listed** in the `requirements.txt` file:
+   - Make sure the `requirements.txt` file includes all the required dependencies for the project.
+   - Install dependencies via the following command:
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+4. **Review the README**:
+   - Go through the README for any specific environment setup or instructions related to the cloud environment and the pipeline.
+
+5. **Wait for the Action to Run**:
+   - The scheduled GitHub Action will automatically trigger according to the defined schedule (e.g., daily at midnight UTC).
+   - Alternatively, the action can be manually triggered via the **GitHub Actions tab** in the repository.
+
+### Steps to Create a Google Cloud Project
 
 1. **Sign in to Google Cloud Console**:
    - Visit the [Google Cloud Console](https://console.cloud.google.com/).
@@ -278,6 +259,7 @@ To use the PetFinder API, you need to obtain your **API key** and **API secret**
      4. **Key**: Under **Key**, select **JSON**. This will generate a key file that you'll download, which will be used in your Python script to authenticate.
    - Click **Create** and save the downloaded JSON key to a secure location on your machine.
 
+# TODO Delete below, this is done with terraform and Secrets in Github
 5. **Create a Google Cloud Storage Bucket**:
    - In the Google Cloud Console, go to the **Cloud Storage** section: **Storage** > **Browser**.
    - Click **Create Bucket**.
@@ -294,7 +276,7 @@ To use the PetFinder API, you need to obtain your **API key** and **API secret**
    - In your Python script, set the `credentials_file` path to the downloaded JSON file for the service account.
    - Set the `bucket_name` to the name of the bucket you created in step 5.
 
-### Example Setup in Python Script:
+...
 In your `main()` function in petfinder_data_loader.py `PetFinderDataLoader`, use the following values:
 
 ```python
@@ -302,168 +284,31 @@ credentials_file = '/path/to/your/service-account-file.json'  # Path to your Ser
 bucket_name = 'your-gcs-bucket-name'  # Replace with the name of your bucket
 ```
 
----
-
 ### Additional Notes:
 - **Bucket Naming Convention**: The bucket name must be globally unique across Google Cloud. Try appending random numbers or using unique prefixes.
 - **Service Account Key**: Keep the service account JSON file secure. It's used for authenticating your application to Google Cloud services.
-  
-By following these steps, you should be able to create a Google Cloud Storage bucket and configure your script to upload data to it securely.
 
 
---
-
-### Docker
-
-1. Install [Docker](https://www.docker.com/get-started) on your local machine.
-2. Clone this repository and navigate to the project folder.
-3. Build the Docker images for the different components using the following commands:
-
-   ```bash
-   docker build -t petfinder-data-ingestion ./data-ingestion
-   docker build -t petfinder-spark-job ./spark-job
-   docker build -t petfinder-dbt ./dbt
-   ```
-
-### Data Ingestion
-
-1. The data ingestion component fetches pet data from the PetFinder API and stores it in Google Cloud Storage.
-2. You need to create a **Google Cloud Storage bucket** for storing raw data.
-
-**Dockerfile for Data Ingestion**:
-```Dockerfile
-# Use a base image with Python installed
-FROM python:3.9-slim
-
-# Set working directory
-WORKDIR /app
-
-# Copy the script to the container
-COPY petfinder_data_loader.py /app
-
-# Install dependencies
-RUN pip install requests google-cloud-storage
-
-# Command to run the data ingestion script
-CMD ["python", "petfinder_data_loader.py"]
-```
-
-### Data Processing
-
-1. The **Spark** job processes the raw data stored in Google Cloud Storage. The job cleans and transforms the data, such as handling missing values, formatting dates, and aggregating pet adoption data.
-
-**Dockerfile for Spark Processing**:
-```Dockerfile
-# Use the official Spark image
-FROM bitnami/spark:latest
-
-# Set working directory
-WORKDIR /app
-
-# Copy your Spark job to the container
-COPY spark_job.py /app
-
-# Install dependencies
-RUN pip install google-cloud-bigquery
-
-# Command to run the Spark job
-CMD ["spark-submit", "spark_job.py"]
-```
-
-### DBT Transformations
-
-1. The **DBT** transformations take place in **BigQuery**, where raw data is cleaned and prepared for analysis.
-
-Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
-
-**Dockerfile for DBT**:
-```Dockerfile
-# Use the official DBT image for BigQuery
-FROM fishtownanalytics/dbt-bigquery:latest
-
-# Set working directory
-WORKDIR /app
-
-# Copy DBT project files to the container
-COPY dbt_project.yml /app
-COPY models /app/models
-
-# Command to run DBT transformations
-CMD ["dbt", "run"]
-```
-
-DBT Example of partitioning and clustering:
-
-```SQL
-
--- models/pet_adoption_model.sql
-{{ 
-  config(
-    materialized='table',
-    partition_by={"field": "adopted_at", "type": "DATE"},
-    cluster_by=["adoption_center", "breed"]
-  )
-}}
-
-WITH pet_adoptions AS (
-  SELECT
-    pet_id,
-    pet_name,
-    breed,
-    adoption_center,
-    adopted_at
-  FROM
-    raw.pet_adoptions
-  WHERE
-    adopted_at >= '2023-01-01'
-)
-
-SELECT
-  pet_id,
-  pet_name,
-  breed,
-  adoption_center,
-  adopted_at
-FROM
-  pet_adoptions
-
-
-```
 
 ---
 
-## Data Flow
+## :wrench: Technologies Used
 
-1. **Data Ingestion**: The Python script (`petfinder_data_loader.py`) pulls data from the PetFinder API and stores it in **Google Cloud Storage**.
-2. **Spark Processing**: The Spark job (`spark_job.py`) fetches the raw data from GCS, processes it, and stores the cleaned data in BigQuery.
-3. **DBT Transformations**: The DBT project applies transformations on the data in BigQuery for further analysis.
-4. **Visualization**: A dashboard in Google Data Studio or Metabase uses the transformed data from BigQuery to visualize adoption trends, pet categories, and more.
-
----
-
-## Running the Pipeline
-
-1. **Build Docker Images**: Run the `docker build` commands for each component as mentioned in the Setup Instructions.
-2. **Start Data Ingestion**: Run the data ingestion container to fetch data from the PetFinder API.
-   ```bash
-   docker run petfinder-data-ingestion
-   ```
-3. **Run Spark Job**: After ingestion, run the Spark job to process the data.
-   ```bash
-   docker run petfinder-spark-job
-   ```
-4. **Run DBT Transformations**: Apply transformations to the data in BigQuery using DBT.
-   ```bash
-   docker run petfinder-dbt
-   ```
+- **Google Cloud Storage (GCS)**: For storing raw data before and after processing.
+- **Python**: For writing scripts to handle data ingestion.
+- **PetFinderAPI**: Datasource
+- **Terraform**: Infrastructure as code (IaC) - Used for creating GCP Bucket and BigQuery
+- **DBT**: For performing SQL-based transformations on the data in BigQuery.
+- **BigQuery Data Warehouse**: For storing processed and transformed data in a data warehouse.
+- **Visualization Tools**: Google Data Studio Looker
 
 
 ---
 
 ## :bulb: Lessons Learned
 
+- **CD/CI & Github Actions**: Learned how to use yml files to run terraform and python using Github Actions
 - **Batch Processing**: Learning how to process large datasets efficiently with Spark was key to handling the PetFinder data at scale.
-- **Containerization**: Docker helped me create isolated environments for each part of the pipeline, making development and deployment much easier.
 - **Transformation Best Practices**: Using DBT for transformations made it easier to maintain and version control SQL-based transformations, ensuring the integrity of the data.
 - **Cloud Integration**: Integrating with **Google Cloud Storage** and **BigQuery** enabled me to scale the pipeline and store data securely for analysis.
 
