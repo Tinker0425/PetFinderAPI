@@ -20,6 +20,11 @@ resource "google_storage_bucket" "petfinder_bucket" {
   force_destroy = true
 }
 
+# TEST
+output "petfinder_bucket" {
+  value = google_storage_bucket.petfinder_bucket.name
+}
+
 # Create BigQuery Dataset
 resource "google_bigquery_dataset" "petfinder_dataset" {
   dataset_id = "petfinder_data"
