@@ -7,7 +7,8 @@ import traceback
 import os
 
 # External imports
-from google.cloud import storage
+from google.cloud import storage, bigquery
+# pip install google-cloud-bigquery
 from google.oauth2.service_account import Credentials
 import requests
 import pandas as pd
@@ -81,13 +82,20 @@ class PetfinderAPIClient:
 
 
 # PetFinder Data Loader
+# TESTING added last 3 variables
 class PetFinderDataLoader:
-    def __init__(self, credentials_json: str, bucket_name: str):
+    def __init__(self, credentials_json: str, bucket_name: str, project_id: str, dataset_id: str, table_id: str):
         """Initialize Google Cloud Storage client using secrets."""
         credentials_dict = json.loads(credentials_json)
         credentials = Credentials.from_service_account_info(credentials_dict)
         self.storage_client = storage.Client(credentials=credentials)
         self.bucket = self.storage_client.bucket(bucket_name)
+        self.bigquery_client = bigquery.Client(credentials=credentials, project=project_id)
+
+        self.project_id = project_id
+        self.dataset_id = dataset_id
+        self.table_id = table_id
+
 
     def transform_to_dataframe(self, pet_data):
         """Convert pet data JSON to a Pandas DataFrame."""
@@ -119,6 +127,22 @@ class PetFinderDataLoader:
         blob.upload_from_string(csv_data, "text/csv")
         print(f"CSV uploaded to {blob_name}")
 
+    def load_csv_to_bigquery(self, blob_name):
+        """Load CSV file from GCS to BigQuery."""
+        table_ref = f"{self.project_id}.{self.dataset_id}.{self.table_id}"
+        uri = f"gs://{self.bucket.name}/{blob_name}"
+
+        job_config = bigquery.LoadJobConfig(
+            source_format=bigquery.SourceFormat.CSV,
+            skip_leading_rows=1,
+            autodetect=True,
+            write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
+        )
+
+        load_job = self.bigquery_client.load_table_from_uri(uri, table_ref, job_config=job_config)
+        load_job.result()  # Wait for the job to complete
+        print(f"Loaded data from {blob_name} into BigQuery table {table_ref}")
+
     def fetch_transform_upload(self, pet_data):
         """Fetch, transform, and upload data."""
         try:
@@ -126,6 +150,11 @@ class PetFinderDataLoader:
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             blob_name = f"processed/petfinder_{timestamp}.csv"
             self.save_csv_to_gcs(df, blob_name)
+
+            # TESTING
+            # Load into BigQuery
+            self.load_csv_to_bigquery(blob_name)
+
         except Exception as e:
             print(f"Error processing data: {e}")
             logging.error(traceback.format_exc())
@@ -142,6 +171,13 @@ def main():
     if not client_id or not client_secret or not bucket_name or not credentials_json:
         raise ValueError("Missing required environment variables!")
 
+    # TESTING
+    # Extract project_id from credentials JSON
+    dataset_id = "petfinder_data"
+    table_id = "raw_petfinder"
+    credentials_dict = json.loads(credentials_json)
+    project_id = credentials_dict.get("project_id")
+
     # Initialize the Petfinder API client
     petfinder_client = PetfinderAPIClient(client_id, client_secret)
 
@@ -153,7 +189,9 @@ def main():
 
     # If data is fetched, upload it to Google Cloud Storage
     if pet_data:
-        loader = PetFinderDataLoader(credentials_json, bucket_name)
+        # TESTING
+        loader = PetFinderDataLoader(credentials_json, bucket_name, project_id, dataset_id, table_id)
+        # loader = PetFinderDataLoader(credentials_json, bucket_name)
         loader.fetch_transform_upload(pet_data)
 
 
