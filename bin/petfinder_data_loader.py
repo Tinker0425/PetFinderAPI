@@ -1,4 +1,3 @@
-
 # Standard imports
 import time
 import json
@@ -9,6 +8,7 @@ import os
 
 # External imports
 from google.cloud import storage
+from google.oauth2.service_account import Credentials
 import requests
 
 
@@ -81,18 +81,12 @@ class PetfinderAPIClient:
 
 # PetFinder Data Loader
 class PetFinderDataLoader:
-    storage_client: storage.Client = None
-    bucket_name: str = None
-    bucket: storage.Bucket = None
-    credentials_file: str = None
-
-    def create_storage_client(self):
-        """Create and return a Google Cloud Storage client."""
-        return storage.Client.from_service_account_json(self.credentials_file)
-
-    def get_bucket(self):
-        """Get the Google Cloud Storage bucket."""
-        return self.storage_client.bucket(self.bucket_name)
+    def __init__(self, credentials_json: str, bucket_name: str):
+        """Initialize Google Cloud Storage client using secrets."""
+        credentials_dict = json.loads(credentials_json)
+        credentials = Credentials.from_service_account_info(credentials_dict)
+        self.storage_client = storage.Client(credentials=credentials)
+        self.bucket = self.storage_client.bucket(bucket_name)
 
     def upload_to_bucket(self, content: str, blob_name: str):
         """Upload the content to a Google Cloud Storage bucket."""
@@ -104,16 +98,6 @@ class PetFinderDataLoader:
         timestamp = datetime.strptime(timestamp_string, '%Y-%m-%dT%H:%M:%S.%f')
         blob_name = f'raw/{timestamp.year}/{timestamp.month}/{timestamp.day}/{timestamp.hour}_{timestamp.minute}_{animal_id}.json'
         return blob_name
-
-    def init(self):
-        """Initialize the PetFinderDataLoader."""
-        self.storage_client = self.create_storage_client()
-        self.bucket = self.get_bucket()
-
-    def set_api_credentials(self, credentials_file: str, bucket_name: str):
-        """Set the credentials file for Google Cloud and bucket name."""
-        self.credentials_file = credentials_file
-        self.bucket_name = bucket_name
 
     def fetch_and_upload_petfinder_data(self, pet_data):
         """Process and upload each pet data to GCS."""
@@ -131,11 +115,14 @@ class PetFinderDataLoader:
 
 # Example usage:
 def main():
-    # Set Petfinder API credentials
+    # Load secrets from environment variables
     client_id = os.getenv("PETFINDER_CLIENT_ID")
     client_secret = os.getenv("PETFINDER_CLIENT_SECRET")
     bucket_name = os.getenv("PETFINDER_BUCKET_NAME")
-    credentials_file = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    credentials_json = os.getenv("GCS_CREDENTIALS")
+
+    if not client_id or not client_secret or not bucket_name or not credentials_json:
+        raise ValueError("Missing required environment variables!")
 
     # Initialize the Petfinder API client
     petfinder_client = PetfinderAPIClient(client_id, client_secret)
@@ -148,9 +135,7 @@ def main():
 
     # If data is fetched, upload it to Google Cloud Storage
     if pet_data:
-        loader = PetFinderDataLoader()
-        loader.set_api_credentials(credentials_file, bucket_name)
-        loader.init()
+        loader = PetFinderDataLoader(credentials_json, bucket_name)
         loader.fetch_and_upload_petfinder_data(pet_data)
 
 
