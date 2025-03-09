@@ -10,6 +10,7 @@ import os
 from google.cloud import storage
 from google.oauth2.service_account import Credentials
 import requests
+import pandas as pd
 
 
 # Petfinder API Client
@@ -64,7 +65,7 @@ class PetfinderAPIClient:
             'Authorization': f'Bearer {self.access_token}',
         }
         params = {
-            'limit': 2,  # Limit to 100 pets for testing, adjust as needed
+            'limit': 10,  # Limit to 10 pets for testing, adjust as needed
             'page': 1,
         }
 
@@ -88,28 +89,45 @@ class PetFinderDataLoader:
         self.storage_client = storage.Client(credentials=credentials)
         self.bucket = self.storage_client.bucket(bucket_name)
 
-    def upload_to_bucket(self, content: str, blob_name: str):
-        """Upload the content to a Google Cloud Storage bucket."""
+    def transform_to_dataframe(self, pet_data):
+        """Convert pet data JSON to a Pandas DataFrame."""
+        records = []
+        for pet in pet_data:
+            record = {
+                "id": pet.get("id"),
+                "name": pet.get("name"),
+                "species": pet.get("species"),
+                "age": pet.get("age"),
+                "gender": pet.get("gender"),
+                "size": pet.get("size"),
+                "coat": pet.get("coat"),
+                "status": pet.get("status"),
+                "primary_breed": pet["breeds"].get("primary") if pet.get("breeds") else None,
+                "secondary_breed": pet["breeds"].get("secondary") if pet.get("breeds") else None,
+                "mixed_breed": pet["breeds"].get("mixed") if pet.get("breeds") else None,
+                "location": f"{pet['contact']['address']['city']}, {pet['contact']['address']['state']}" if pet.get("contact") else None,
+                "published_at": pet.get("published_at"),
+            }
+            records.append(record)
+
+        return pd.DataFrame(records)
+
+    def save_csv_to_gcs(self, df, blob_name):
+        """Upload CSV to Google Cloud Storage."""
+        csv_data = df.to_csv(index=False)
         blob = self.bucket.blob(blob_name)
-        blob.upload_from_string(content)
+        blob.upload_from_string(csv_data, "text/csv")
+        print(f"CSV uploaded to {blob_name}")
 
-    def generate_blob_name(self, animal_id: str, timestamp_string: str):
-        """Generate a blob name for Google Cloud Storage."""
-        timestamp = datetime.strptime(timestamp_string, '%Y-%m-%dT%H:%M:%S.%f')
-        blob_name = f'raw/{timestamp.year}/{timestamp.month}/{timestamp.day}/{timestamp.hour}_{timestamp.minute}_{animal_id}.json'
-        return blob_name
-
-    def fetch_and_upload_petfinder_data(self, pet_data):
-        """Process and upload each pet data to GCS."""
+    def fetch_transform_upload(self, pet_data):
+        """Fetch, transform, and upload data."""
         try:
-            for animal in pet_data:
-                animal_data = json.dumps(animal)
-                timestamp_string = datetime.now().isoformat()
-                blob_name = self.generate_blob_name(animal['id'], timestamp_string)
-                self.upload_to_bucket(animal_data, blob_name)
-                print(f"Uploaded data for animal {animal['id']} to {blob_name}")
+            df = self.transform_to_dataframe(pet_data)
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            blob_name = f"processed/petfinder_{timestamp}.csv"
+            self.save_csv_to_gcs(df, blob_name)
         except Exception as e:
-            print(f"Error uploading data: {e}")
+            print(f"Error processing data: {e}")
             logging.error(traceback.format_exc())
 
 
@@ -136,7 +154,7 @@ def main():
     # If data is fetched, upload it to Google Cloud Storage
     if pet_data:
         loader = PetFinderDataLoader(credentials_json, bucket_name)
-        loader.fetch_and_upload_petfinder_data(pet_data)
+        loader.fetch_transform_upload(pet_data)
 
 
 if __name__ == "__main__":
