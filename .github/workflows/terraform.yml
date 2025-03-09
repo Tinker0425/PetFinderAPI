@@ -1,9 +1,6 @@
 name: Terraform GCP Deployment
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
