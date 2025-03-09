@@ -25,6 +25,9 @@
 - [:wrench: Technologies Used](#technologies-used)
 - [:bulb: Lessons Learned](#lessons-learned)
 
+---
+![petfinder](docs/PetfinderAPI.png)
+---
 
 ## :question: Problem description
 
