@@ -25,9 +25,10 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
 
       - name: Initialize Terraform
-        run: terraform init
+        run: cd terraform && terraform init
 
       - name: Apply Terraform Configuration
         env:
           TF_VAR_google_credentials: ${{ secrets.GCS_CREDENTIALS }}
-        run: terraform apply -auto-approve
+        run: cd terraform && terraform apply -auto-approve
+
