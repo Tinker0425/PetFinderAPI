@@ -36,16 +36,16 @@ jobs:
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
         run: cd terraform && terraform apply -auto-approve
 
-      - name: Clean Up Credentials
-        if: always()
-        run: rm -f credentials.json
-
-
       # TEST
       - name: Capture Terraform Output
         run: |
           echo "Fetching Terraform outputs..."
-          BUCKET_NAME=$(cd terraform && terraform output -raw petfinder_bucket)
+          cd terraform
+          terraform output
+          BUCKET_NAME=$(terraform output -raw petfinder_bucket)
           echo "GCS_BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
 
+      - name: Clean Up Credentials
+        if: always()
+        run: rm -f credentials.json
 
