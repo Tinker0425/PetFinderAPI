@@ -14,19 +14,19 @@
 ## 📖 Evaluation Criteria as Table of Contents
 
 **Based on Project rubric**
-- [:question: Problem Description](#question-problem-description)
+- [:face_with_monocle: Problem Description](#question-problem-description)
+- [:building_construction: Pipeline Architecture](#pipeline-architecture)
 - [:cloud: Cloud](#cloud-cloud)
 - [:violin: Batch / Workflow Orchestration](#violin-batch--workflow-orchestration)
-- [Data Warehouse](#data-warehouse)
-- [Transformations](#transformations)
+- [:file_cabinet: Data Warehouse](#data-warehouse)
+- [:arrows_counterclockwise: Transformations](#transformations)
 - [:rocket: Dashboard Visualization](#dashboard)
 - [:recycle: Reproducibility / Setup Instructions](#reproducibility)
-- [Pipeline Architecture](#pipeline-architecture)
-- [Technologies Used](#technologies-used)
-- [Lessons Learned](#lessons-learned)
+- [:wrench: Technologies Used](#technologies-used)
+- [:bulb: Lessons Learned](#lessons-learned)
 
 
-## :question: Problem description
+## :face_with_monocle: Problem description
 
 The **problem** is the challenge of handling, processing, and visualizing pet adoption data from 
 Pet Finder API [docs](https://www.petfinder.com/developers/v2/docs/) in an automated, 
@@ -42,6 +42,7 @@ The architecture of the data pipeline involves several components:
 5. **Visualization**: Creating a **Google Data Studio Looker dashboard** with 2 tiles of insights on pet adoption trends.  
 6. **Automation**: Using **GitHub Actions** for automated daily batch processing.
 
+## :building_construction: Pipeline Architecture
 # TODO IMAGE of FLOW
 User clone, create PetFinder API and add secrets, create GCP project and service account and add secrets. Then run terraform
 action yml to create bucket and bigquery, then action daily run will add csv to bucket and data to bigquery.
@@ -63,17 +64,17 @@ This project uses Github Actions and runs batches daily. The workflow orchestrat
 - Transforming data using dbt.
 - Visualizing data in Looker.
 
-## Data warehouse
+## :file_cabinet: Data warehouse
 
 This project uses BigQuery for the data warehouse and the tables are partitioned and clustered 
 in a way that makes sense for the upstream queries (with explanation).
 ## TODO partition and cluster and explain
 
-## Transformations 
+## :arrows_counterclockwise: Transformations 
 
 Transformations are defined with dbt
 ## TODO
-### DBT Transformations
+DBT Transformations
 
 1. The **DBT** transformations take place in **BigQuery**, where raw data is cleaned and prepared for analysis.
 
