@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Terraform
@@ -20,15 +20,23 @@ jobs:
           terraform_version: 1.5.0
 
       - name: Authenticate with Google Cloud
-        run: echo "Authenticated with Google Cloud"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
+        run: |
+          echo "$GOOGLE_CREDENTIALS" > credentials.json
+          export PROJECT_ID=$(jq -r '.project_id' credentials.json)
+          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
 
       - name: Initialize Terraform
         run: cd terraform && terraform init
 
       - name: Apply Terraform Configuration
         env:
-          TF_VAR_google_credentials: ${{ secrets.GCS_CREDENTIALS }}
+          TF_VAR_gcs_credentials: ${{ secrets.GCS_CREDENTIALS }}
+          TF_VAR_project_id: ${{ env.PROJECT_ID }}
         run: cd terraform && terraform apply -auto-approve
+
+      - name: Clean Up Credentials
+        if: always()
+        run: rm -f credentials.json
 
