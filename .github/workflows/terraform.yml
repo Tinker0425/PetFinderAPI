@@ -37,27 +37,15 @@ jobs:
         run: cd terraform && terraform apply -auto-approve
 
       # TEST - going to create .env instead and then read in with daily yml
-      - name: Capture Terraform Output
+      - name: Capture Terraform Output and Save to .env
         run: |
           echo "Fetching Terraform outputs..."
           cd terraform
-          terraform output
-          BUCKET_NAME=$(terraform output -raw petfinder_bucket)
-          PROJECT_ID=$(terraform output -raw project_id)
+          echo "GCS_BUCKET_NAME=$(terraform output -raw petfinder_bucket)" > $GITHUB_WORKSPACE/.env
+          echo "PROJECT_ID=$(terraform output -raw project_id)" >> $GITHUB_WORKSPACE/.env
 
-          # Save values in a .env file
-          echo "GCS_BUCKET_NAME=$BUCKET_NAME" > .env
-          echo "PROJECT_ID=$PROJECT_ID" >> .env
-
-#          # Export as GitHub environment variables (if needed later)
-#          echo "GCS_BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
-#          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
-
-      - name: Upload .env as an artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: env-file
-          path: .env
+      - name: Verify .env File
+        run: cat .env
 
       # END
       - name: Clean Up Credentials
