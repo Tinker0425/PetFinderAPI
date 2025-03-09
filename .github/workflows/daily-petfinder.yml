@@ -1,0 +1,39 @@
+name: Fetch and Upload PetFinder Data
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Runs daily at midnight UTC
+  workflow_dispatch:  # Allows manual execution
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests google-cloud-storage
+
+      - name: Run script
+        env:
+          PETFINDER_CLIENT_ID: ${{ secrets.PETFINDER_CLIENT_ID }}
+          PETFINDER_CLIENT_SECRET: ${{ secrets.PETFINDER_CLIENT_SECRET }}
+          PETFINDER_BUCKET_NAME: ${{ secrets.PETFINDER_BUCKET_NAME }} # Use `secrets.` if private
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
+        run: python script.py
+
+
+#      - name: Upload log file
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: script-logs
+#          path: logs/petfinder_api.log  # Update this to match your script
