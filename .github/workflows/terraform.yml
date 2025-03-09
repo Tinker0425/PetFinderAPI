@@ -42,7 +42,8 @@ jobs:
           echo "Fetching Terraform outputs..."
           cd terraform
           echo "GCS_BUCKET_NAME=$(terraform output -raw petfinder_bucket)" > $GITHUB_WORKSPACE/.env
-          echo "PROJECT_ID=$(terraform output -raw project_id)" >> $GITHUB_WORKSPACE/.env
+
+      # echo "PROJECT_ID=$(terraform output -raw project_id)" >> $GITHUB_WORKSPACE/.env
 
       - name: Verify .env File
         run: cat .env
