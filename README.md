@@ -14,7 +14,7 @@
 ## 📖 Evaluation Criteria as Table of Contents
 
 **Based on Project rubric**
-- [:face_with_monocle: Problem Description](#question-problem-description)
+- [:question: Problem Description](#question-problem-description)
 - [:building_construction: Pipeline Architecture](#pipeline-architecture)
 - [:cloud: Cloud](#cloud-cloud)
 - [:violin: Batch / Workflow Orchestration](#violin-batch--workflow-orchestration)
@@ -26,7 +26,7 @@
 - [:bulb: Lessons Learned](#lessons-learned)
 
 
-## :face_with_monocle: Problem description
+## :question: Problem description
 
 The **problem** is the challenge of handling, processing, and visualizing pet adoption data from 
 Pet Finder API [docs](https://www.petfinder.com/developers/v2/docs/) in an automated, 
