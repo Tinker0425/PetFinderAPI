@@ -66,7 +66,7 @@ class PetfinderAPIClient:
             'Authorization': f'Bearer {self.access_token}',
         }
         params = {
-            'limit': 10,  # Limit to 10 pets for testing, adjust as needed
+            'limit': 10000,  # Limit to 10 pets for testing, adjust as needed
             'page': 1,
         }
 

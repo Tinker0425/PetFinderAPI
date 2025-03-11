@@ -27,6 +27,7 @@
 
 ---
 ![petfinder](docs/PetfinderAPI.png)
+*Image Created Using AI
 ---
 
 ## :question: Problem description
