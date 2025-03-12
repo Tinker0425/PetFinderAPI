@@ -46,4 +46,5 @@ jobs:
 
       - name: Run dbt Transformations
         run: |
+          cd petfinder_dbt  # Move into the correct directory
           dbt run
