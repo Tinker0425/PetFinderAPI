@@ -70,15 +70,44 @@ class PetfinderAPIClient:
             'page': 1,
         }
 
-        response = requests.get(url, headers=headers, params=params)
+        # response = requests.get(url, headers=headers, params=params)
+        #
+        # if response.status_code == 200:
+        #     pet_data = response.json()
+        #     print(f"Fetched {len(pet_data['animals'])} animals.")
+        #     return pet_data['animals']
+        # else:
+        #     print(f"Error: {response.status_code} - {response.text}")
+        #     return None
 
-        if response.status_code == 200:
-            pet_data = response.json()
-            print(f"Fetched {len(pet_data['animals'])} animals.")
-            return pet_data['animals']
-        else:
-            print(f"Error: {response.status_code} - {response.text}")
-            return None
+        all_records = []
+
+        while True:
+            response = requests.get(url, headers=headers, params=params)
+
+            if response.status_code != 200:
+                print(f"Error: {response.status_code} - {response.text}")
+                break
+
+            data = response.json()
+            animals = data.get("animals", [])
+            all_records.extend(animals)
+
+            # Pagination handling
+            pagination = data.get("pagination", {})
+            total_pages = pagination.get("total_pages", 1)
+            current_page = params["page"]
+
+            print(f"Fetched page {current_page} of {total_pages} ({len(animals)} records)")
+
+            if current_page >= total_pages:
+                break  # Stop when all pages are fetched
+
+            params["page"] += 1  # Go to next page
+            time.sleep(0.5)  # Small delay to avoid rate limits
+
+        print(f"Total records fetched: {len(all_records)}")
+        return all_records
 
 
 # PetFinder Data Loader
