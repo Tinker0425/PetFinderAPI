@@ -24,7 +24,10 @@ jobs:
       - name: Configure Google Cloud Authentication
         env:
           GCP_KEY_JSON: ${{ secrets.GCS_CREDENTIALS }}
-        run: echo "$GCP_KEY_JSON" > gcp-key.json
+        run: |
+          echo "$GCP_KEY_JSON" > gcp-key.json
+          cat gcp-key.json  # Debugging step to verify the file exists
+          ls -lah gcp-key.json  # List file details
 
       - name: Extract Project ID from JSON
         id: extract_project_id
