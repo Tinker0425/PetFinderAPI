@@ -1,0 +1,49 @@
+name: Run dbt Transformations
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+  schedule:
+    - cron: '0 3 * * *'  # Runs daily at 3 AM UTC
+
+jobs:
+  dbt-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dbt for BigQuery
+        run: pip install dbt-bigquery
+
+      - name: Configure Google Cloud Authentication
+        env:
+          GCP_KEY_JSON: ${{ secrets.GCS_CREDENTIALS }}
+        run: echo "$GCP_KEY_JSON" > gcp-key.json
+
+      - name: Extract Project ID from JSON
+        id: extract_project_id
+        run: echo "GCP_PROJECT_ID=$(jq -r '.project_id' gcp-key.json)" >> $GITHUB_ENV
+
+      - name: Set up dbt Profile
+        run: |
+          mkdir -p ~/.dbt
+          echo 'petfinder_dbt:
+            outputs:
+              dev:
+                type: bigquery
+                method: service-account
+                project: "${{ env.GCP_PROJECT_ID }}"
+                dataset: petfinder_transformed
+                threads: 4
+                keyfile: gcp-key.json
+            target: dev' > ~/.dbt/profiles.yml
+
+      - name: Run dbt Transformations
+        run: |
+          dbt run

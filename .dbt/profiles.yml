@@ -1,0 +1,11 @@
+petfinder:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: petfinder_data
+      threads: 4
+      keyfile: "{{ env_var('GCS_CREDENTIALS_FILE') }}"
+      timeout_seconds: 300

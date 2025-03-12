@@ -1,0 +1,12 @@
+name: "petfinder_dbt"
+version: "1.0"
+config-version: 2
+
+profile: "petfinder"
+
+models:
+  petfinder_dbt:
+    staging:
+      materialized: view
+    transformations:
+      materialized: table
