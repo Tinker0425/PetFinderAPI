@@ -2,7 +2,7 @@ name: "petfinder_dbt"
 version: "1.0"
 config-version: 2
 
-profile: "petfinder"
+profile: "petfinder_dbt"
 
 models:
   petfinder_dbt:
