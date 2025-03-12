@@ -4,8 +4,8 @@ petfinder:
     dev:
       type: bigquery
       method: service-account
-      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      project: "{{ env_var('PROJECT_ID') }}"
       dataset: petfinder_data
       threads: 4
-      keyfile: "{{ env_var('GCS_CREDENTIALS_FILE') }}"
+      keyfile: "{{ env_var('GCS_CREDENTIALS') }}"
       timeout_seconds: 300

@@ -41,7 +41,7 @@ jobs:
                 type: bigquery
                 method: service-account
                 project: "${{ env.PROJECT_ID }}"
-                dataset: petfinder_transformed
+                dataset: petfinder_data
                 threads: 4
                 keyfile: "/home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/credentials.json"
             target: dev' > ~/.dbt/profiles.yml
