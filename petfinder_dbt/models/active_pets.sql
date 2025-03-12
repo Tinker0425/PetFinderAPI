@@ -7,5 +7,5 @@ SELECT
     size,
     status,
     location
-FROM `'raw_petfinder'`
+FROM `petfinderapi.petfinder_data.raw_petfinder`
 WHERE status = 'adoptable'
