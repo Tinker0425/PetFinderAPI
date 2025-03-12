@@ -50,6 +50,7 @@ jobs:
         run: |
           cd petfinder_dbt  # Move into the correct directory
           dbt run
+          dbt run --vars '{"raw_petfinder_table": "raw_petfinder"}'
 
       - name: Clean Up Credentials
         if: always()
