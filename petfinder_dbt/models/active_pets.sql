@@ -7,5 +7,5 @@ SELECT
     size,
     status,
     location
-FROM `{{ var('raw_petfinder') }}`
+FROM `'raw_petfinder'`
 WHERE status = 'adoptable'
