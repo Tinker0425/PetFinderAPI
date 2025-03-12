@@ -21,17 +21,16 @@ jobs:
       - name: Install dbt for BigQuery
         run: pip install dbt-bigquery
 
-      - name: Configure Google Cloud Authentication
+      - name: Authenticate with Google Cloud
         env:
-          GCP_KEY_JSON: ${{ secrets.GCS_CREDENTIALS }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
         run: |
-          echo "$GCP_KEY_JSON" > gcp-key.json
-          cat gcp-key.json  # Debugging step to verify the file exists
-          ls -lah gcp-key.json  # List file details
-
-      - name: Extract Project ID from JSON
-        id: extract_project_id
-        run: echo "GCP_PROJECT_ID=$(jq -r '.project_id' gcp-key.json)" >> $GITHUB_ENV
+          echo "$GOOGLE_CREDENTIALS" > credentials.json
+          export PROJECT_ID=$(jq -r '.project_id' credentials.json)
+          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+          echo "Google Cloud authentication complete. Using PROJECT_ID=$PROJECT_ID"
+          ls -lah credentials.json  # Verify file exists
+          cat credentials.json | jq '.'  # Ensure JSON format is correct
 
       - name: Set up dbt Profile
         run: |
@@ -41,13 +40,17 @@ jobs:
               dev:
                 type: bigquery
                 method: service-account
-                project: "${{ env.GCP_PROJECT_ID }}"
+                project: "${{ env.PROJECT_ID }}"
                 dataset: petfinder_transformed
                 threads: 4
-                keyfile: gcp-key.json
+                keyfile: credentials.json
             target: dev' > ~/.dbt/profiles.yml
 
       - name: Run dbt Transformations
         run: |
           cd petfinder_dbt  # Move into the correct directory
           dbt run
+
+      - name: Clean Up Credentials
+        if: always()
+        run: rm -f credentials.json
