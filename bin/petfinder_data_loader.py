@@ -5,6 +5,9 @@ from datetime import datetime
 import logging
 import traceback
 import os
+# NEW
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 # External imports
 from google.cloud import storage, bigquery
@@ -21,6 +24,9 @@ class PetfinderAPIClient:
         self.client_secret = client_secret
         self.access_token = None
         self.token_expiration = None
+        # NEW
+        self.base_url = "https://api.petfinder.com/v2/animals"
+
 
     def get_access_token(self):
         """Request and retrieve the access token from Petfinder API."""
@@ -52,24 +58,66 @@ class PetfinderAPIClient:
             print("Access token expired, refreshing token...")
             self.get_access_token()
 
-    def get_petfinder_data(self):
-        """Make an API request to Petfinder to fetch data."""
-        if self.is_token_expired():
-            self.refresh_access_token()
+    # NEW
+    def fetch_total_count(self):
+        """Fetch total number of animals available."""
+        self.refresh_access_token()
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+        response = requests.get(self.base_url, headers=headers, params={"limit": 1})
+        if response.status_code == 200:
+            return response.json()["pagination"]["total_count"]
+        else:
+            raise Exception(f"Error fetching total count: {response.text}")
 
-        if not self.access_token:
-            print("Error: No access token available.")
-            return None
+    def fetch_page(self, page):
+        """Fetch a single page of data."""
+        self.refresh_access_token()
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+        params = {"limit": 100, "page": page}  # Max limit = 100
+        response = requests.get(self.base_url, headers=headers, params=params)
+        if response.status_code == 200:
+            return response.json()["animals"]
+        else:
+            print(f"Failed to fetch page {page}: {response.text}")
+            return []
 
-        url = 'https://api.petfinder.com/v2/animals'
-        headers = {
-            'Authorization': f'Bearer {self.access_token}',
-        }
-        params = {
-            'limit': 99,  # Limit to 10 pets for testing, adjust as needed
-            'page': 1,
-        }
+    def fetch_all_data(self, max_workers=10):
+        """Fetch all data in parallel using multithreading."""
+        total_count = self.fetch_total_count()
+        total_pages = (total_count // 100) + 1  # 100 per page
 
+        print(f"Fetching {total_count} records across {total_pages} pages...")
+
+        all_pets = []
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(self.fetch_page, page) for page in range(1, total_pages + 1)]
+            for future in as_completed(futures):
+                all_pets.extend(future.result())
+
+        print(f"Total records fetched: {len(all_pets)}")
+        return all_pets
+
+    # def get_petfinder_data(self):
+    #     """Make an API request to Petfinder to fetch data."""
+    #     if self.is_token_expired():
+    #         self.refresh_access_token()
+    #
+    #     if not self.access_token:
+    #         print("Error: No access token available.")
+    #         return None
+    #
+    #     url = 'https://api.petfinder.com/v2/animals'
+    #     headers = {
+    #         'Authorization': f'Bearer {self.access_token}',
+    #     }
+    #     params = {
+    #         'limit': 99,  # Limit to 10 pets for testing, adjust as needed
+    #         'page': 1,
+    #     }
+
+        ####
+        # Works for small batch - good for test
+        ####
         # response = requests.get(url, headers=headers, params=params)
         #
         # if response.status_code == 200:
@@ -80,34 +128,38 @@ class PetfinderAPIClient:
         #     print(f"Error: {response.status_code} - {response.text}")
         #     return None
 
-        all_records = []
+        ######
+        # Works, but too slow
+        #######
 
-        while True:
-            response = requests.get(url, headers=headers, params=params)
-
-            if response.status_code != 200:
-                print(f"Error: {response.status_code} - {response.text}")
-                break
-
-            data = response.json()
-            animals = data.get("animals", [])
-            all_records.extend(animals)
-
-            # Pagination handling
-            pagination = data.get("pagination", {})
-            total_pages = pagination.get("total_pages", 1)
-            current_page = params["page"]
-
-            print(f"Fetched page {current_page} of {total_pages} ({len(animals)} records)")
-
-            if current_page >= total_pages:
-                break  # Stop when all pages are fetched
-
-            params["page"] += 1  # Go to next page
-            time.sleep(0.5)  # Small delay to avoid rate limits
-
-        print(f"Total records fetched: {len(all_records)}")
-        return all_records
+        # all_records = []
+        #
+        # while True:
+        #     response = requests.get(url, headers=headers, params=params)
+        #
+        #     if response.status_code != 200:
+        #         print(f"Error: {response.status_code} - {response.text}")
+        #         break
+        #
+        #     data = response.json()
+        #     animals = data.get("animals", [])
+        #     all_records.extend(animals)
+        #
+        #     # Pagination handling
+        #     pagination = data.get("pagination", {})
+        #     total_pages = pagination.get("total_pages", 1)
+        #     current_page = params["page"]
+        #
+        #     print(f"Fetched page {current_page} of {total_pages} ({len(animals)} records)")
+        #
+        #     if current_page >= total_pages:
+        #         break  # Stop when all pages are fetched
+        #
+        #     params["page"] += 1  # Go to next page
+        #     time.sleep(0.5)  # Small delay to avoid rate limits
+        #
+        # print(f"Total records fetched: {len(all_records)}")
+        # return all_records
 
 
 # PetFinder Data Loader
@@ -213,8 +265,13 @@ def main():
     # Fetch the initial access token
     petfinder_client.get_access_token()
 
-    # Fetch pet data from Petfinder
-    pet_data = petfinder_client.get_petfinder_data()
+    # NEW
+    # Fetch all data using parallel requests
+    pet_data = petfinder_client.fetch_all_data(max_workers=10)  # Adjust max_workers as needed
+
+    # # Fetch pet data from Petfinder
+    # pet_data = petfinder_client.get_petfinder_data()
+
 
     # If data is fetched, upload it to Google Cloud Storage
     if pet_data:
