@@ -17,6 +17,13 @@ import requests
 import pandas as pd
 
 
+# NEW
+# Constants
+MAX_REQUESTS_PER_DAY = 150  # Limit to 950 requests to stay safe
+PAGE_LIMIT = 100            # Max allowed records per request
+SLEEP_TIME = 2              # Wait 2 seconds between requests to prevent hitting limits
+
+
 # Petfinder API Client
 class PetfinderAPIClient:
     def __init__(self, client_id, client_secret):
@@ -26,7 +33,7 @@ class PetfinderAPIClient:
         self.token_expiration = None
         # NEW
         self.base_url = "https://api.petfinder.com/v2/animals"
-
+        self.request_count = 0  # Track API requests
 
     def get_access_token(self):
         """Request and retrieve the access token from Petfinder API."""
@@ -38,6 +45,7 @@ class PetfinderAPIClient:
         }
 
         response = requests.post(url, data=data)
+        self.request_count += 1
 
         if response.status_code == 200:
             token_data = response.json()
@@ -60,21 +68,31 @@ class PetfinderAPIClient:
 
     # NEW
     def fetch_total_count(self):
-        """Fetch total number of animals available."""
         self.refresh_access_token()
+        if self.request_count >= MAX_REQUESTS_PER_DAY:
+            print("Request limit reached. Stopping data fetch.")
+            return 0
+
         headers = {"Authorization": f"Bearer {self.access_token}"}
         response = requests.get(self.base_url, headers=headers, params={"limit": 1})
+        self.request_count += 1
+
         if response.status_code == 200:
             return response.json()["pagination"]["total_count"]
         else:
             raise Exception(f"Error fetching total count: {response.text}")
 
     def fetch_page(self, page):
-        """Fetch a single page of data."""
         self.refresh_access_token()
+        if self.request_count >= MAX_REQUESTS_PER_DAY:
+            return []
+
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        params = {"limit": 100, "page": page}  # Max limit = 100
+        params = {"limit": PAGE_LIMIT, "page": page}
         response = requests.get(self.base_url, headers=headers, params=params)
+        self.request_count += 1
+        time.sleep(SLEEP_TIME)
+
         if response.status_code == 200:
             return response.json()["animals"]
         else:
@@ -82,17 +100,18 @@ class PetfinderAPIClient:
             return []
 
     def fetch_all_data(self, max_workers=10):
-        """Fetch all data in parallel using multithreading."""
         total_count = self.fetch_total_count()
-        total_pages = (total_count // 100) + 1  # 100 per page
+        max_pages = min(MAX_REQUESTS_PER_DAY, (total_count // PAGE_LIMIT) + 1)
 
-        print(f"Fetching {total_count} records across {total_pages} pages...")
-
+        print(f"Fetching up to {max_pages} pages of data...")
         all_pets = []
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [executor.submit(self.fetch_page, page) for page in range(1, total_pages + 1)]
+            futures = [executor.submit(self.fetch_page, page) for page in range(1, max_pages + 1)]
             for future in as_completed(futures):
                 all_pets.extend(future.result())
+                if self.request_count >= MAX_REQUESTS_PER_DAY:
+                    print("Reached API request limit, stopping further requests.")
+                    break
 
         print(f"Total records fetched: {len(all_pets)}")
         return all_pets
