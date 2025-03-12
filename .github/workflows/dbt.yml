@@ -43,7 +43,7 @@ jobs:
                 project: "${{ env.PROJECT_ID }}"
                 dataset: petfinder_transformed
                 threads: 4
-                keyfile: credentials.json
+                keyfile: "/home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/credentials.json"
             target: dev' > ~/.dbt/profiles.yml
 
       - name: Run dbt Transformations
