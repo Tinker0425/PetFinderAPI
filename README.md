@@ -52,10 +52,8 @@ The architecture of the data pipeline involves several components:
 6. **Automation**: Using **GitHub Actions** for automated daily batch processing.
 
 ## :building_construction: Pipeline Architecture
-# TODO IMAGE of FLOW
 User clone, create PetFinder API and add secrets, create GCP project and service account and add secrets. Then run terraform
 action yml to create bucket and bigquery, then action daily run will add csv to bucket and data to bigquery.
-TODO - This will then run dbt for transformations, then looker
 
 ![project workflow](project.drawio.svg)
 
