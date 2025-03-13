@@ -27,6 +27,7 @@
 
 ---
 ![petfinder](docs/PetfinderAPI.png)
+
 *Image Created Using AI
 ---
 
@@ -51,6 +52,8 @@ The architecture of the data pipeline involves several components:
 User clone, create PetFinder API and add secrets, create GCP project and service account and add secrets. Then run terraform
 action yml to create bucket and bigquery, then action daily run will add csv to bucket and data to bigquery.
 TODO - This will then run dbt for transformations, then looker
+
+![project workflow](Untitled Diagram.draw.io)
 
 ## :cloud: Cloud
 
