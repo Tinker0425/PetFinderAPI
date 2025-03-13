@@ -31,6 +31,10 @@
 *Image Created Using AI
 ---
 
+UPNEXT - the csv is downloading, but the BigQuery raw is on the single file, it needs to be all PLUS the new file...
+or not? Each day is what 100k? figure size first...Then match that it is big data and good for project...work
+with DBT and looker too with smaller data.
+
 ## :question: Problem description
 
 The **problem** is the challenge of handling, processing, and visualizing pet adoption data from 
