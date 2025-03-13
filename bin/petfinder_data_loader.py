@@ -19,7 +19,7 @@ import pandas as pd
 
 # NEW
 # Constants
-MAX_REQUESTS_PER_DAY = 150  # Limit to 950 requests to stay safe
+MAX_REQUESTS_PER_DAY = 300  # Limit to 950 requests to stay safe
 PAGE_LIMIT = 100            # Max allowed records per request
 SLEEP_TIME = 2              # Wait 2 seconds between requests to prevent hitting limits
 
