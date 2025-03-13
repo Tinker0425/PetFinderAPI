@@ -53,7 +53,7 @@ User clone, create PetFinder API and add secrets, create GCP project and service
 action yml to create bucket and bigquery, then action daily run will add csv to bucket and data to bigquery.
 TODO - This will then run dbt for transformations, then looker
 
-![project workflow](Untitled Diagram.drawio)
+![project workflow](project.drawio.svg)
 
 ## :cloud: Cloud
 
