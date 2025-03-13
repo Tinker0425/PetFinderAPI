@@ -57,8 +57,8 @@
             <mxPoint x="440" y="250" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="to8TNLGDrXPE27GqOt8g-0" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://w7.pngwing.com/pngs/167/141/png-transparent-looker-hd-logo.png;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="105" y="481.86" width="458" height="120.48" as="geometry" />
+        <mxCell id="to8TNLGDrXPE27GqOt8g-2" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://cdn.freebiesupply.com/logos/large/2x/looker-logo-png-transparent.png;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="185" y="459.99999999999994" width="340" height="132.88" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
