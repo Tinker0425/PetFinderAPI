@@ -34,6 +34,10 @@
 UPNEXT - the csv is downloading, but the BigQuery raw is on the single file, it needs to be all PLUS the new file...
 or not? Each day is what 100k? figure size first...Then match that it is big data and good for project...work
 with DBT and looker too with smaller data.
+Yes, so for my data, I need multiple days of data, so even 30k but just go back in time...I also need to 
+lower my api, maybe just pull dogs, that way i can look at all of them...or dogs vs. cats for the pie chart.
+Then DBT, I need to partition them and cluster by breed and location, I want to make states for another plot.
+I also would like to make how long in shelter?
 
 ## :question: Problem description
 
@@ -137,7 +141,10 @@ After loading the transformed data into BigQuery, you can create a dashboard to 
 - **Tile 1**: A bar chart showing the distribution of pets by type.
 - **Tile 2**: A time series chart showing the number of adoptions over time.
 
-**Google Data Studio** to create and share the dashboard.
+**Google Data Studio - Looker** to create and share the dashboard.
+
+If you need a how-to for looker, go here:
+https://www.youtube.com/watch?v=39nLTs74A3E
 
 Two tiles:
 

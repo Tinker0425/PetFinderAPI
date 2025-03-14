@@ -19,7 +19,7 @@ import pandas as pd
 
 # NEW
 # Constants
-MAX_REQUESTS_PER_DAY = 300  # Limit to 950 requests to stay safe
+MAX_REQUESTS_PER_DAY = 600  # Limit to 950 requests to stay safe
 PAGE_LIMIT = 100            # Max allowed records per request
 SLEEP_TIME = 2              # Wait 2 seconds between requests to prevent hitting limits
 
@@ -236,7 +236,8 @@ class PetFinderDataLoader:
             source_format=bigquery.SourceFormat.CSV,
             skip_leading_rows=1,
             autodetect=True,
-            write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
+            write_disposition=bigquery.WriteDisposition.WRITE_APPEND  # Append data instead of overwriting
+            # write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
         )
 
         load_job = self.bigquery_client.load_table_from_uri(uri, table_ref, job_config=job_config)
