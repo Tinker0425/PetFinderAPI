@@ -138,21 +138,13 @@ class PetFinderDataLoader:
             record = {
                 "id": pet.get("id"),
                 "organization_id": pet.get("organization_id"),
-                "type": pet.get("type"),
                 "species": pet.get("species"),
                 "primary_breed": pet["breeds"].get("primary") if pet.get("breeds") else None,
-                "secondary_breed": pet["breeds"].get("secondary") if pet.get("breeds") else None,
-                "mixed_breed": pet["breeds"].get("mixed") if pet.get("breeds") else None,
-                "unknown_breed": pet["breeds"].get("unknown") if pet.get("breeds") else None,
                 "primary_color": pet["colors"].get("primary") if pet.get("colors") else None,
-                "secondary_color": pet["colors"].get("secondary") if pet.get("colors") else None,
-                "tertiary_color": pet["colors"].get("tertiary") if pet.get("colors") else None,
                 "age": pet.get("age"),
                 "gender": pet.get("gender"),
                 "size": pet.get("size"),
-                "coat": pet.get("coat"),
                 "name": pet.get("name"),
-                "description": pet.get("description"),
                 "status": pet.get("status"),
                 "spayed_neutered": pet["attributes"].get("spayed_neutered") if pet.get("attributes") else None,
                 "house_trained": pet["attributes"].get("house_trained") if pet.get("attributes") else None,
@@ -164,16 +156,10 @@ class PetFinderDataLoader:
                 "good_with_cats": pet["environment"].get("cats") if pet.get("environment") else None,
                 "tags": pet.get("tags", []),  # List of tags
                 "email": pet["contact"].get("email") if pet.get("contact") else None,
-                "latitude": pet["contact"]["address"].get("latitude")
-                if pet.get("contact") and pet["contact"].get("address") else None,
-                "longitude": pet["contact"]["address"].get("longitude")
-                if pet.get("contact") and pet["contact"].get("address") else None,
                 "location": f"{pet['contact']['address'].get('city', '')}, {pet['contact']['address'].get('state', '')}".strip(
                     ", ")
                 if pet.get("contact") and pet["contact"].get("address") else None,
                 "postcode": pet["contact"]["address"].get("postcode")
-                if pet.get("contact") and pet["contact"].get("address") else None,
-                "country": pet["contact"]["address"].get("country")
                 if pet.get("contact") and pet["contact"].get("address") else None,
                 "published_at": pet.get("published_at"),
             }
