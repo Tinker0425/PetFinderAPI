@@ -6,13 +6,23 @@ WITH raw AS (
         age,
         gender,
         size,
-        coat,
         status,
         primary_breed,
-        secondary_breed,
-        mixed_breed,
+        primary_color,
+        spayed_neutered,
+        house_trained,
+        declawed,
+        special_needs,
+        shots_current,
+        good_with_children,
+        good_with_dogs,
+        good_with_cats,
+        tags,
         location,
-        TIMESTAMP(published_at) AS published_at
+        postcode,
+        TIMESTAMP(published_at) AS published_at,
+        organization_id,
+        email
     FROM `petfinderapi.petfinder_data.raw_petfinder`
 )
 
