@@ -7,9 +7,10 @@ WITH cleaned_data AS (
         gender,
         size,
         primary_breed,
-        secondary_breed,
-        mixed_breed,
         location,
+        SPLIT(location, ', ')[SAFE_OFFSET(0)] AS city,
+        SPLIT(location, ', ')[SAFE_OFFSET(1)] AS state,
+        postcode,
         published_at,
         CASE
             WHEN age = 'Baby' THEN '0-1 years'
