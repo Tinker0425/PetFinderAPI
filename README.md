@@ -31,28 +31,22 @@
 *Image Created Using AI
 ---
 
-UPNEXT - the csv is downloading, but the BigQuery raw is on the single file, it needs to be all PLUS the new file...
-or not? Each day is what 100k? figure size first...Then match that it is big data and good for project...work
-with DBT and looker too with smaller data.
+UPNEXT 
 Yes, so for my data, I need multiple days of data, so even 30k but just go back in time...I also need to 
 lower my api, maybe just pull dogs, that way i can look at all of them...or dogs vs. cats for the pie chart.
-Then DBT, I need to partition them and cluster by breed and location, I want to make states for another plot.
 I also would like to make how long in shelter?
 Add cluster and partitionings
 TODO - adjust my api pull to include lat lon (map) for a map and org name (my org danes vs. other danes)...and good with tags (pie chart)
 
 https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4a255/page/oenBF
 
-###
-
-<iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4a255/page/oenBF" frameborder="0" style="border:0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
 
 ## :question: Problem description
 
 The **problem** is the challenge of handling, processing, and visualizing pet adoption data from 
 Pet Finder API [docs](https://www.petfinder.com/developers/v2/docs/) in an automated, 
 scalable, and efficient manner. The **solution** is an end-to-end data pipeline leveraging 
-**Python, CI/CD, DBT, Google BigQuery, and Google Cloud Storage**, with automation via **GitHub Actions**. 
+**Python, Terraform, DBT, Google BigQuery, and Google Cloud Storage**, with automation via **GitHub Actions**. 
 
 The architecture of the data pipeline involves several components:
 
@@ -87,85 +81,82 @@ This project uses Github Actions and runs batches daily. The workflow orchestrat
 
 ## :file_cabinet: Data warehouse
 
-This project uses BigQuery for the data warehouse and the tables are partitioned and clustered 
-in a way that makes sense for the upstream queries (with explanation).
-## TODO partition and cluster and explain
+This project uses BigQuery for the data warehouse and the tables are partitioned and clustered. For the petfinder
+dataset, I partition by processed date, and then cluster by species, age group, and state.
 
 ## :arrows_counterclockwise: Transformations 
 
-Transformations are defined with dbt
-## TODO
-DBT Transformations
-
-1. The **DBT** transformations take place in **BigQuery**, where raw data is cleaned and prepared for analysis.
-
-Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
-
-DBT Example of partitioning and clustering:
+The **DBT** transformations take place in **BigQuery**, where raw data is cleaned and prepared for analysis.
+The transformation script is as follows:
 
 ```SQL
 
--- models/pet_adoption_model.sql
-{{ 
-  config(
+-- models/transformations/transformed_petfinder.sql
+{{ config(
     materialized='table',
-    partition_by={"field": "adopted_at", "type": "DATE"},
-    cluster_by=["adoption_center", "breed"]
-  )
-}}
+    partition_by={'field': 'published_at', 'data_type': 'TIMESTAMP'},
+    cluster_by=['species', 'age_group', 'state']
+) }}
 
-WITH pet_adoptions AS (
-  SELECT
-    pet_id,
-    pet_name,
-    breed,
-    adoption_center,
-    adopted_at
-  FROM
-    raw.pet_adoptions
-  WHERE
-    adopted_at >= '2023-01-01'
+WITH cleaned_data AS (
+    SELECT
+        id,
+        name,
+        species,
+        age,
+        gender,
+        size,
+        primary_breed,
+        primary_color,
+        CAST(spayed_neutered AS BOOL) AS spayed_neutered,
+        CAST(house_trained AS BOOL) AS house_trained,
+        CAST(declawed AS BOOL) AS declawed,
+        CAST(special_needs AS BOOL) AS special_needs,
+        CAST(shots_current AS BOOL) AS shots_current,
+        CAST(good_with_children AS BOOL) AS good_with_children,
+        CAST(good_with_dogs AS BOOL) AS good_with_dogs,
+        CAST(good_with_cats AS BOOL) AS good_with_cats,
+        tags,
+        location,
+        SPLIT(location, ', ')[SAFE_OFFSET(0)] AS city,
+        SPLIT(location, ', ')[SAFE_OFFSET(1)] AS state,
+        postcode,
+        published_at,
+        organization_id,
+        email,
+        CASE
+            WHEN ARRAY_LENGTH(SPLIT(tags, ', ')) > 0 THEN ARRAY_TO_STRING(SPLIT(tags, ', '), ', ')
+            ELSE NULL
+        END AS tags_string,
+        CASE
+            WHEN age = 'Baby' THEN '0-1 years'
+            WHEN age = 'Young' THEN '1-3 years'
+            WHEN age = 'Adult' THEN '3-7 years'
+            WHEN age = 'Senior' THEN '7+ years'
+            ELSE 'Unknown'
+        END AS age_group
+    FROM {{ ref('stg_petfinder') }}
 )
 
-SELECT
-  pet_id,
-  pet_name,
-  breed,
-  adoption_center,
-  adopted_at
-FROM
-  pet_adoptions
-
+SELECT * FROM cleaned_data
 
 ```
 
 
-
 ## :rocket: Dashboard Visualization
-
-TODO Two tiles screenshots
-
-After loading the transformed data into BigQuery, you can create a dashboard to visualize key metrics and trends in pet adoption. For example:
-- **Tile 1**: A bar chart showing the distribution of pets by type.
-- **Tile 2**: A time series chart showing the number of adoptions over time.
 
 **Google Data Studio - Looker** to create and share the dashboard.
 
-If you need a how-to for looker, go here:
-https://www.youtube.com/watch?v=39nLTs74A3E
 
-Two tiles:
+After loading the transformed data into BigQuery, a dashboard to visualize key metrics and trends in pet adoption:
+- **Tile 1**: A pie chart showing the distribution of dogs vs. cats.
+- **Tile 2**: A time series chart showing the number of adoptions of cats and dogs time.
 
-- 1 graph that shows the distribution of some categorical data 
-- 1 graph that shows the distribution of the data across a temporal line
-
+TODO screenshot
 Ensure that your graph is easy to understand by adding references and titles.
 
-✅ Search for Pets – Filter by breed, age, size, and location.
-✅ Detailed Pet Profiles – View pet names, breeds, descriptions, and shelter contact information.
-✅ Favorites List – Save pets for later reference.
-✅ Responsive Design – Optimized for both mobile and desktop users.
-
+If you need a how-to for looker, go here:
+https://www.youtube.com/watch?v=39nLTs74A3E
 
 ## :recycle: Reproducibility / Setup Instructions
 
