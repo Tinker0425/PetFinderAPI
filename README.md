@@ -46,29 +46,29 @@ https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4
 The **problem** is the challenge of handling, processing, and visualizing pet adoption data from 
 Pet Finder API [docs](https://www.petfinder.com/developers/v2/docs/) in an automated, 
 scalable, and efficient manner. The **solution** is an end-to-end data pipeline leveraging 
-**Python, Terraform, DBT, Google BigQuery, and Google Cloud Storage**, with automation via **GitHub Actions**. 
+**Python, Terraform, DBT, Google BigQuery, and Google Cloud Storage**, with automation via **GitHub Actions**.
+
+## :building_construction: Pipeline Architecture
 
 The architecture of the data pipeline involves several components:
 
-1. **Data Ingestion**: Extracting pet adoption data from the PetFinder API using Python. 
+1. **Data Ingestion**: Extracting pet adoption data from the PetFinder API using Python. Automated with Github Actions cron job.
 2. **Storage & Processing**: Using **Google Cloud Storage (GCS) as a data lake** and **Python with Terraform** for automation.  
 3. **Data Warehousing**: Moving processed data from GCS to **Google BigQuery** using Python.  
 4. **Data Transformation**: Using **DBT** to clean, model, and optimize data by processing and transforming the data for meaningful insights using partitioning and clustering. 
 5. **Visualization**: Creating a **Google Data Studio Looker dashboard** with 2 tiles of insights on pet adoption trends.  
 6. **Automation**: Using **GitHub Actions** for automated daily batch processing.
 
-## :building_construction: Pipeline Architecture
-User clone, create PetFinder API and add secrets, create GCP project and service account and add secrets. Then run terraform
-action yml to create bucket and bigquery, then action daily run will add csv to bucket and data to bigquery.
+:warning: Note that the user must manually create an account for [PetFinder API](https://www.petfinder.com/developers/v2/docs/), 
+update Github Actions, and create a Google Cloud account. 
 
 ![project workflow](project.drawio.svg)
 
 ## :cloud: Cloud
 
-This project utilizes Google Cloud Platform (GCP) services including Google Cloud Storage (GCS)
-and BigQuery for data storage and processing. This project uses Terraform `Infrastructure as Code (IaC)` to automate 
+This project utilizes Google Cloud Platform (GCP) services including Google Cloud Storage (GCS) Data Lake
+and BigQuery Data Warehouse for data storage and processing. This project uses Terraform `Infrastructure as Code (IaC)` to automate 
 the setup and management of cloud resources including the GCP bucket for the data lake.
-### TODO - Google Cloud Storage Bucket using TERRAFORM 
 
 ## :violin: Batch / Workflow orchestration
 
