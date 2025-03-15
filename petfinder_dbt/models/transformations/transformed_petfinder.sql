@@ -30,7 +30,10 @@ WITH cleaned_data AS (
         published_at,
         organization_id,
         email,
-        ARRAY_TO_STRING(tags, ', ') AS tags_string,
+        CASE
+            WHEN ARRAY_LENGTH(tags) > 0 THEN ARRAY_TO_STRING(tags, ', ')
+            ELSE NULL
+        END AS tags_string,
         CASE
             WHEN age = 'Baby' THEN '0-1 years'
             WHEN age = 'Young' THEN '1-3 years'
