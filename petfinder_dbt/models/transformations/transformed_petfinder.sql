@@ -31,7 +31,7 @@ WITH cleaned_data AS (
         organization_id,
         email,
         CASE
-            WHEN ARRAY_LENGTH(tags) > 0 THEN ARRAY_TO_STRING(tags, ', ')
+            WHEN ARRAY_LENGTH(SPLIT(tags, ', ')) > 0 THEN ARRAY_TO_STRING(SPLIT(tags, ', '), ', ')
             ELSE NULL
         END AS tags_string,
         CASE
