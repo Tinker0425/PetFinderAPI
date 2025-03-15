@@ -1,3 +1,9 @@
+{{ config(
+    materialized='table',
+    partition_by={'field': 'published_at', 'data_type': 'TIMESTAMP'},
+    cluster_by=['species', 'age_group', 'state']
+) }}
+
 WITH cleaned_data AS (
     SELECT
         id,
