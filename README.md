@@ -38,6 +38,14 @@ Yes, so for my data, I need multiple days of data, so even 30k but just go back 
 lower my api, maybe just pull dogs, that way i can look at all of them...or dogs vs. cats for the pie chart.
 Then DBT, I need to partition them and cluster by breed and location, I want to make states for another plot.
 I also would like to make how long in shelter?
+Add cluster and partitionings
+TODO - adjust my api pull to include lat lon (map) for a map and org name (my org danes vs. other danes)...and good with tags (pie chart)
+
+https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4a255/page/oenBF
+
+###
+
+<iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4a255/page/oenBF" frameborder="0" style="border:0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
 
 ## :question: Problem description
 
