@@ -64,56 +64,36 @@ class PetfinderAPIClient:
             print("Access token expired, refreshing token...")
             self.get_access_token()
 
-    # NEW
-    def fetch_total_count(self):
-        self.refresh_access_token()
-        if self.request_count >= MAX_REQUESTS_PER_DAY:
-            print("Request limit reached. Stopping data fetch.")
-            return 0
-
-        headers = {"Authorization": f"Bearer {self.access_token}"}
-        response = requests.get(self.base_url, headers=headers, params={"limit": 1})
-        self.request_count += 1
-
-        if response.status_code == 200:
-            return response.json()["pagination"]["total_count"]
-        else:
-            raise Exception(f"Error fetching total count: {response.text}")
-
-    def fetch_page(self, page, before_date=None):
-        """Fetch a single page of data, optionally filtering by published_at date."""
-        self.refresh_access_token()
-        if self.request_count >= MAX_REQUESTS_PER_DAY:
-            return []
-
-        headers = {"Authorization": f"Bearer {self.access_token}"}
-        params = {"limit": PAGE_LIMIT, "page": page}
-
-        if before_date:
-            params["before"] = before_date  # Fetch only records published before this date
-
-        response = requests.get(self.base_url, headers=headers, params=params)
-        self.request_count += 1
-        time.sleep(SLEEP_TIME)
-
-        if response.status_code == 200:
-            return response.json().get("animals", [])
-        else:
-            print(f"Failed to fetch page {page}: {response.text}")
-            return []
-
-    def fetch_all_data(self, start_date=None, days_to_fetch=10):
+    # NEW Method: To handle fetching in 10-day chunks using 'before' and 'after'
+    def fetch_data_for_next_period(self, start_date, days_to_fetch=10):
         """
-        Fetch all available data starting from start_date and backfilling older records.
-        Stops when reaching the desired number of days back.
+        Fetch data for the next 'days_to_fetch' days, starting from 'start_date'.
+        This fetches data progressively, 10 days at a time, using 'before' and 'after' query parameters.
+        """
+        # Calculate the end date of this period
+        end_date = (datetime.fromisoformat(start_date) + timedelta(days=days_to_fetch)).isoformat()
+
+        print(f"Fetching data from {start_date} to {end_date}...")
+
+        # Fetch the data for this 10-day period using 'before' and 'after'
+        return self.fetch_all_data(start_date=start_date, end_date=end_date)
+
+    # Adjust the fetch_all_data method to use the new 'before' and 'after' logic
+    def fetch_all_data(self, start_date=None, end_date=None, days_to_fetch=10):
+        """
+        Fetch all available data between the 'start_date' and 'end_date',
+        using 'before' and 'after' query parameters.
         """
         all_pets = []
         current_date = start_date if start_date else datetime.now(timezone.utc).isoformat()
-        end_date = (datetime.now(timezone.utc) - timedelta(days=days_to_fetch)).isoformat()
+        end_date = end_date if end_date else (datetime.now(timezone.utc) - timedelta(days=days_to_fetch)).isoformat()
 
         while current_date > end_date:
             print(f"Fetching data before {current_date}...")
-            page_pets = self.fetch_page(1, before_date=current_date)  # Always start with page 1 for oldest data
+
+            # Fetch a page of data, passing 'before' (published before) and 'after' (published after) dates
+            page_pets = self.fetch_page(1, before_date=current_date,
+                                        after_date=end_date)  # Always start with page 1 for oldest data
 
             if not page_pets:
                 print("No more older records available.")
@@ -135,6 +115,32 @@ class PetfinderAPIClient:
 
         print(f"Total records fetched after filtering: {len(all_pets)}")
         return all_pets
+
+    # Adjust the fetch_page method to handle 'before_date' and 'after_date' parameters
+    def fetch_page(self, page, before_date=None, after_date=None):
+        """Fetch a single page of data, optionally filtering by 'before' and 'after' dates."""
+        self.refresh_access_token()
+        if self.request_count >= MAX_REQUESTS_PER_DAY:
+            return []
+
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+        params = {"limit": PAGE_LIMIT, "page": page}
+
+        # Add 'before' and 'after' parameters if provided
+        if before_date:
+            params["before"] = before_date  # Fetch only records published before this date
+        if after_date:
+            params["after"] = after_date  # Fetch only records published after this date
+
+        response = requests.get(self.base_url, headers=headers, params=params)
+        self.request_count += 1
+        time.sleep(SLEEP_TIME)
+
+        if response.status_code == 200:
+            return response.json().get("animals", [])
+        else:
+            print(f"Failed to fetch page {page}: {response.text}")
+            return []
 
 
 # PetFinder Data Loader
@@ -260,14 +266,29 @@ def main():
     timeline = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
 
     # Use a lower number of workers for deep backfill
-    pet_data = petfinder_client.fetch_all_data(start_date=timeline)
+    while True:
+        # Fetch data for the current 10-day window
+        pet_data, new_start_date = petfinder_client.fetch_data_for_next_period(start_date=start_date)
+
+        # If data is fetched, upload it to Google Cloud Storage and BigQuery
+        if pet_data:
+            loader = PetFinderDataLoader(credentials_json, bucket_name, project_id, dataset_id, table_id)
+            loader.fetch_transform_upload(pet_data)
+
+        # Update the start date for the next iteration (10 days back)
+        start_date = new_start_date
+
+        # Optionally add a sleep or a break condition based on your desired frequency.
+        # time.sleep(3600)  # Sleep for an hour between fetches
+        # If you want to stop after a certain number of iterations, you can add a condition here.
+        # Example: if a certain number of days has been processed.
 
     # If data is fetched, upload it to Google Cloud Storage
-    if pet_data:
-        # TESTING
-        loader = PetFinderDataLoader(credentials_json, bucket_name, project_id, dataset_id, table_id)
-        # loader = PetFinderDataLoader(credentials_json, bucket_name)
-        loader.fetch_transform_upload(pet_data)
+    # if pet_data:
+    #     # TESTING
+    #     loader = PetFinderDataLoader(credentials_json, bucket_name, project_id, dataset_id, table_id)
+    #     # loader = PetFinderDataLoader(credentials_json, bucket_name)
+    #     loader.fetch_transform_upload(pet_data)
 
 
 if __name__ == "__main__":
