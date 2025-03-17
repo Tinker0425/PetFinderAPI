@@ -263,12 +263,12 @@ def main():
     petfinder_client.get_access_token()
 
     # Start from 6 months ago
-    timeline = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
+    timeline = (datetime.now(timezone.utc) - timedelta(days=5)).isoformat()
 
     # Use a lower number of workers for deep backfill
     while True:
         # Fetch data for the current 10-day window
-        pet_data, new_start_date = petfinder_client.fetch_data_for_next_period(start_date=start_date)
+        pet_data, new_start_date = petfinder_client.fetch_data_for_next_period(start_date=timeline, days_to_fetch=5)
 
         # If data is fetched, upload it to Google Cloud Storage and BigQuery
         if pet_data:
