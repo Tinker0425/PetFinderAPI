@@ -1,7 +1,7 @@
 # Standard imports
 import time
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 import traceback
 import os
@@ -85,8 +85,12 @@ class PetfinderAPIClient:
         if self.request_count >= MAX_REQUESTS_PER_DAY:
             return []
 
+        # Calculate the date and time for yesterday
+        yesterday = datetime.now() - timedelta(days=1)
+        after = yesterday.isoformat()  # This will return the ISO8601 format date-time string for yesterday
+
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        params = {"limit": PAGE_LIMIT, "page": page}
+        params = {"limit": PAGE_LIMIT, "page": page, "after": after}
         response = requests.get(self.base_url, headers=headers, params=params)
         self.request_count += 1
         time.sleep(SLEEP_TIME)
