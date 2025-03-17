@@ -92,8 +92,7 @@ class PetfinderAPIClient:
             print(f"Fetching data before {current_date}...")
 
             # Fetch a page of data, passing 'before' (published before) and 'after' (published after) dates
-            page_pets = self.fetch_page(1, before_date=current_date,
-                                        after_date=end_date)  # Always start with page 1 for oldest data
+            page_pets = self.fetch_page(1, before_date=current_date, after_date=end_date)  # Always start with page 1 for oldest data
 
             if not page_pets:
                 print("No more older records available.")
@@ -104,8 +103,7 @@ class PetfinderAPIClient:
             all_pets.extend(filtered_pets)
 
             # Update `current_date` to the oldest record in this batch
-            oldest_record_date = min((pet["published_at"] for pet in page_pets if "published_at" in pet),
-                                     default=current_date)
+            oldest_record_date = min((pet["published_at"] for pet in page_pets if "published_at" in pet), default=current_date)
             current_date = oldest_record_date
 
             # Stop if we reached the desired historical date
@@ -114,7 +112,7 @@ class PetfinderAPIClient:
                 break
 
         print(f"Total records fetched after filtering: {len(all_pets)}")
-        return all_pets
+        return all_pets, current_date  # return data and updated start date
 
     # Adjust the fetch_page method to handle 'before_date' and 'after_date' parameters
     def fetch_page(self, page, before_date=None, after_date=None):
