@@ -1,0 +1,38 @@
+name: One-Time Backfill
+
+on:
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests google-cloud-storage google-auth pandas google-cloud-bigquery
+
+      - name: Run script
+        env:
+          PETFINDER_CLIENT_ID: ${{ secrets.PETFINDER_CLIENT_ID }}
+          PETFINDER_CLIENT_SECRET: ${{ secrets.PETFINDER_CLIENT_SECRET }}
+          # PETFINDER_BUCKET_NAME: ${{ secrets.PETFINDER_BUCKET_NAME }} # Use `secrets.` if private
+          # GCS_BUCKET_NAME: ${{ env.GCS_BUCKET_NAME }}
+          GCS_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
+        run: python bin/petfinder_data_loader_saverocky.py
+
+
+#      - name: Upload log file
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: script-logs
+#          path: logs/petfinder_api.log  # Update this to match your script
