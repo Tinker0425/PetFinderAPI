@@ -1,7 +1,7 @@
 # Standard imports
 import time
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timzone
 import logging
 import traceback
 import os
@@ -18,7 +18,7 @@ import pandas as pd
 
 # NEW
 # Constants
-MAX_REQUESTS_PER_DAY = 800  # Limit to 950 requests to stay safe
+MAX_REQUESTS_PER_DAY = 50  # Limit to 950 requests to stay safe
 PAGE_LIMIT = 100            # Max allowed records per request
 SLEEP_TIME = 2              # Wait 2 seconds between requests to prevent hitting limits
 
@@ -86,8 +86,9 @@ class PetfinderAPIClient:
             return []
 
         # Calculate the date and time for yesterday
-        yesterday = datetime.now() - timedelta(days=1)
-        after = yesterday.isoformat()  # This will return the ISO8601 format date-time string for yesterday
+        #yesterday = datetime.now() - timedelta(days=1)
+        #after = yesterday.isoformat()  # This will return the ISO8601 format date-time string for yesterday
+        after = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
         headers = {"Authorization": f"Bearer {self.access_token}"}
         params = {"limit": PAGE_LIMIT, "page": page, "after": after}
