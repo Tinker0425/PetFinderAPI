@@ -174,11 +174,46 @@ https://www.youtube.com/watch?v=39nLTs74A3E
 
 ## :recycle: Reproducibility / Setup Instructions
 
+### Steps to Create a Google Cloud Project
+
+:bulb: Review GCP Setup from the course if needed [here](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/01-docker-terraform/1_terraform_gcp/2_gcp_overview.md)
+
+1. **Sign in to Google Cloud Console**:
+   - Visit the [Google Cloud Console](https://console.cloud.google.com/).
+   - Sign in with your Google account. If you don't have one, you will need to create an account.
+
+2. **Create a Google Cloud Project**:
+   - If you don't have a project yet, you'll need to create one.
+     1. In the Cloud Console, click on the **project drop-down** at the top of the page.
+     2. Click **New Project**.
+     3. Name your project `PetFinderAPI`
+     4. Click **Create**.
+
+3. **Enable Google Cloud Storage API**:
+   - In the Cloud Console, navigate to the **APIs & Services** > **Library**.
+   - Search for **Google Cloud Storage** in the search bar and select **Google Cloud Storage JSON API**.
+   - Click **Enable** to enable the API for your project.
+
+4. **Create a Service Account**:
+   - Navigate to **IAM & Admin** > **Service Accounts** in the Google Cloud Console.
+   - Click **Create Service Account**.
+     1. **Service Account Name**: Enter a name `petfinder-api-access`, create + continue
+     2. **Role**: Choose **Owner** 
+     3. In the **Role** dropdown, select **Storage Object Admin**
+     4. Click Continue & Done
+   - Now you should see your service account! Click on it, and then click `Keys` tab
+   - **Add Key** - **Create New Key**, select **JSON**. This will generate a key file that you'll download
+   - Click **Create** and save the downloaded JSON key to a secure location on your machine.
+   :warning: - **Service Account Key**: Keep the service account JSON file secure and DO NOT add it to github.
+
+
 ### :key: **API Key and Access Token Setup**
 
 The data is sourced from the **PetFinder API** [Documentation](https://www.petfinder.com/developers/), which provides information about adoptable pets from various organizations. 
 The dataset includes details such as pet names, types, ages, breeds, and adoption statuses. To use the PetFinder API, 
 you need to obtain your **API key** and **API secret** from PetFinder. Here's how to get them:
+
+:pencil: Each user needs to create their own API key and access token as **they are unique to each user**.
 
 1. **Sign up for an account** on PetFinder:
    - Visit [PetFinder API](https://www.petfinder.com/developers/) and click `Get an API Key` to sign up and create a developer account.
@@ -189,16 +224,13 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
    - Now you should have your keys, copy them somewhere for now and keep the window open
    - Once logged in, go to the [API Key Management](https://www.petfinder.com/developers/) page to see your account and generate your API key and secret.
 
-### **Important Notes**:
-- Each user needs to create their own API key and access token as **they are unique to each user**.
-- Make sure not to share your **API key** and **secret** publicly to avoid unauthorized access.
-
+:warning: Make sure not to share your **API key** and **secret** publicly to avoid unauthorized access.
 
 ### **Clone/Fork This Repo in Gihub**
 
 1. **Fork/Clone the repository**:
    - Fork it to your GitHub account.
-   - This is mandatory, as I use CI/CD Github Actions
+   - This is mandatory, as I use Github Actions for Workflow
 
 2. **Set up secrets**:
    - Go to the repository's **Settings** > **Secrets and variables** > **Actions**.
@@ -220,33 +252,6 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
 5. **Wait for the Action to Run**:
    - The scheduled GitHub Action will automatically trigger according to the defined schedule (e.g., daily at midnight UTC).
    - Alternatively, the action can be manually triggered via the **GitHub Actions tab** in the repository.
-
-### Steps to Create a Google Cloud Project
-
-1. **Sign in to Google Cloud Console**:
-   - Visit the [Google Cloud Console](https://console.cloud.google.com/).
-   - Sign in with your Google account. If you don't have one, you will need to create an account.
-
-2. **Create a Google Cloud Project**:
-   - If you don't have a project yet, you'll need to create one.
-     1. In the Cloud Console, click on the **project drop-down** at the top of the page.
-     2. Click **New Project**.
-     3. Name your project, select your billing account (if prompted), and choose a location.
-     4. Click **Create**.
-
-3. **Enable Google Cloud Storage API**:
-   - In the Cloud Console, navigate to the **APIs & Services** > **Library**.
-   - Search for **Google Cloud Storage** in the search bar and select **Google Cloud Storage JSON API**.
-   - Click **Enable** to enable the API for your project.
-
-4. **Create a Service Account**:
-   - Navigate to **IAM & Admin** > **Service Accounts** in the Google Cloud Console.
-   - Click **Create Service Account**.
-     1. **Service Account Name**: Enter a name (e.g., `petfinder-api-access`).
-     2. **Role**: Choose **Project > Owner** (or a more restrictive role if needed).
-     3. In the **Role** dropdown, select **Storage Object Admin**.
-     4. **Key**: Under **Key**, select **JSON**. This will generate a key file that you'll download, which will be used in your Python script to authenticate.
-   - Click **Create** and save the downloaded JSON key to a secure location on your machine.
 
 ...
 In your `main()` function in petfinder_data_loader.py `PetFinderDataLoader`, use the following values:
