@@ -1,7 +1,7 @@
 # Standard imports
 import time
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import logging
 import traceback
 import os
@@ -88,7 +88,8 @@ class PetfinderAPIClient:
         # Calculate the date and time for yesterday
         #yesterday = datetime.now() - timedelta(days=1)
         #after = yesterday.isoformat()  # This will return the ISO8601 format date-time string for yesterday
-        after = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        after = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
 
         headers = {"Authorization": f"Bearer {self.access_token}"}
         params = {"limit": PAGE_LIMIT, "page": page, "after": after}
