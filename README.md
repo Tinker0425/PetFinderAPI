@@ -79,7 +79,9 @@ This project uses Github Actions to run batches daily. The workflow orchestratio
 - Transforming data using dbt.
 - Visualizing data in Looker.
 
-:question: What is Github Actions? 
+---
+
+### :question: What is Github Actions? 
 
 In your GitHub Repo, you can find 'Actions' by looking for the tab with the forward arrow :arrow_forward:
 
@@ -172,64 +174,23 @@ https://www.youtube.com/watch?v=39nLTs74A3E
 
 ## :recycle: Reproducibility / Setup Instructions
 
-### **API Key and Access Token Setup**
+### :key: **API Key and Access Token Setup**
 
-Data Source
-
-The data is sourced from the **PetFinder API**, which provides information about adoptable pets from various organizations. 
-The dataset includes details such as pet names, types, ages, breeds, and adoption statuses.
-
-- PetFinder API documentation: [PetFinder API Documentation](https://www.petfinder.com/developers/)
-
-To use the PetFinder API, you need to obtain your **API key** and **API secret** from PetFinder. Here's how to get them:
+The data is sourced from the **PetFinder API** [Documentation](https://www.petfinder.com/developers/), which provides information about adoptable pets from various organizations. 
+The dataset includes details such as pet names, types, ages, breeds, and adoption statuses. To use the PetFinder API, 
+you need to obtain your **API key** and **API secret** from PetFinder. Here's how to get them:
 
 1. **Sign up for an account** on PetFinder:
-   - Visit [PetFinder API](https://www.petfinder.com/developers/) to sign up and create a developer account.
-   - Once logged in, go to the [API Key Management](https://www.petfinder.com/developers/) page to generate your API key and secret.
-
-2. **Get Access Token**:
-   After you have your **API key** and **API secret**, you'll need to generate an **access token** to authenticate your API requests.
-
-   Use the following `curl` command (or a Python script) to get the access token:
-   ```bash
-   curl -d "grant_type=client_credentials&client_id={YOUR-CLIENT-ID}&client_secret={YOUR-CLIENT-SECRET}" https://api.petfinder.com/v2/oauth2/token
-   ```
-   
-   Replace `{YOUR-CLIENT-ID}` and `{YOUR-CLIENT-SECRET}` with your own **API Key** and **API Secret**.
-
-   The response will look something like this:
-   ```json
-   {
-     "token_type": "bearer",
-     "expires_in": 3600,
-     "access_token": "your_access_token_here"
-   }
-   ```
-
-3. **Set up environment variables**:
-   - Store your **API key**, **API secret**, and **access token** in your environment variables for security and convenience.
-
-   For example, in your terminal (Linux/macOS):
-   ```bash
-   export PETFINDER_API_KEY="your-client-id"
-   export PETFINDER_API_SECRET="your-client-secret"
-   export PETFINDER_ACCESS_TOKEN="your-access-token"
-   ```
-
-   Or, for Windows (using PowerShell):
-   ```bash
-   $env:PETFINDER_API_KEY="your-client-id"
-   $env:PETFINDER_API_SECRET="your-client-secret"
-   $env:PETFINDER_ACCESS_TOKEN="your-access-token"
-   ```
-
-4. **Use the Access Token**:
-   After setting up the environment variables, the program will use the access token to authenticate requests to the PetFinder API.
-
+   - Visit [PetFinder API](https://www.petfinder.com/developers/) and click `Get an API Key` to sign up and create a developer account.
+   - Once you sign up - go back to the link above if needed - and then fill out the form
+     - Application Name - 'Fill in'
+     - Application URL - 'None'
+     - Check mark and click `Get a Key`
+   - Now you should have your keys, copy them somewhere for now and keep the window open
+   - Once logged in, go to the [API Key Management](https://www.petfinder.com/developers/) page to see your account and generate your API key and secret.
 
 ### **Important Notes**:
 - Each user needs to create their own API key and access token as **they are unique to each user**.
-- The access token typically expires after an hour, so you'll need to refresh it periodically.
 - Make sure not to share your **API key** and **secret** publicly to avoid unauthorized access.
 
 
