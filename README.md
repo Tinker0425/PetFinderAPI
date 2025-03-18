@@ -174,7 +174,7 @@ https://www.youtube.com/watch?v=39nLTs74A3E
 
 ## :recycle: Reproducibility / Setup Instructions
 
-### Steps to Create a Google Cloud Project
+### :cloud: Steps to Create a Google Cloud Project
 
 :bulb: Review GCP Setup from the course if needed [here](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/01-docker-terraform/1_terraform_gcp/2_gcp_overview.md)
 
@@ -226,7 +226,7 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
 
 :warning: Make sure not to share your **API key** and **secret** publicly to avoid unauthorized access.
 
-### **Clone/Fork This Repo in Gihub**
+### :fork_and_knife: **Clone/Fork This Repo in Gihub**
 
 1. **Fork/Clone the repository**:
    - Fork it to your GitHub account.
