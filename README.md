@@ -57,7 +57,7 @@ The architecture of the data pipeline involves several components:
 3. **Data Warehousing**: Moving processed data from GCS to **Google BigQuery** using Python.  
 4. **Data Transformation**: Using **DBT** to clean, model, and optimize data by processing and transforming the data for meaningful insights using partitioning and clustering. 
 5. **Visualization**: Creating a **Google Data Studio Looker dashboard** with 2 tiles of insights on pet adoption trends.  
-6. **Automation**: Using **GitHub Actions** for automated daily batch processing.
+6. **Automation**: Using **GitHub Actions** yml file for automated daily cron batch processing.
 
 ![project workflow](project.drawio.svg)
 
@@ -72,12 +72,22 @@ the setup and management of cloud resources including the GCP bucket for the dat
 
 ## :violin: Batch / Workflow orchestration
 
-This project uses Github Actions and runs batches daily. The workflow orchestration pipeline is:
+This project uses Github Actions to run batches daily. The workflow orchestration pipeline is:
 
 - Automatically ingesting daily data from the API into the cloud storage (data lake).
 - Moving data from the data lake to BigQuery (data warehouse).
 - Transforming data using dbt.
 - Visualizing data in Looker.
+
+:question: What is Github Actions? 
+
+In your GitHub Repo, you can find 'Actions' by looking for the tab with the forward arrow :arrow_forward:
+
+In this project, GitHub Actions is used to automate daily batch jobs by setting up a workflow with a cron schedule that 
+runs at a specific time each day. This is done using the on: schedule event in a workflow YAML file. 
+Inside the workflow, jobs are defined with steps that execute scripts, run commands, or trigger external services.
+This daily batch job fetches data from an API, process it, and stores the results in google cloud storage. 
+The automation ensures that tasks run consistently without manual intervention.
 
 ## :file_cabinet: Data warehouse
 
@@ -152,6 +162,8 @@ After loading the transformed data into BigQuery, a dashboard to visualize key m
 - **Tile 2**: A time series chart showing the total number of pet profiles added daily to PetFinder.
 
 ![graphs](looker.png)
+
+:eyes: See my full dashboard [here](https://lookerstudio.google.com/s/r_UWAUGaVC8)
 
 :bulb: If you need a how-to for looker, go here:
 https://www.youtube.com/watch?v=39nLTs74A3E
@@ -272,23 +284,6 @@ To use the PetFinder API, you need to obtain your **API key** and **API secret**
      3. In the **Role** dropdown, select **Storage Object Admin**.
      4. **Key**: Under **Key**, select **JSON**. This will generate a key file that you'll download, which will be used in your Python script to authenticate.
    - Click **Create** and save the downloaded JSON key to a secure location on your machine.
-
-# TODO Delete below, this is done with terraform and Secrets in Github
-5. **Create a Google Cloud Storage Bucket**:
-   - In the Google Cloud Console, go to the **Cloud Storage** section: **Storage** > **Browser**.
-   - Click **Create Bucket**.
-     1. **Bucket Name**: Choose a globally unique name for your bucket (e.g., `my-petfinder-bucket-12345`).
-     2. **Location Type**: Choose the location (e.g., **Multi-region** or **Region**). For simplicity, you can choose a **Multi-region** location such as `US`.
-     3. **Storage Class**: Select the default storage class (e.g., **Standard**).
-     4. Click **Create**.
-
-6. **[IF NEEDED] To Adjust Permissions for Your Service Account**:
-   - In the **IAM & Admin** section, click **IAM**.
-   - Re-download key: Click the three vertical dots next to your service account and select **Manage Keys**
-
-7. **Use the Bucket and Service Account in Your Script**:
-   - In your Python script, set the `credentials_file` path to the downloaded JSON file for the service account.
-   - Set the `bucket_name` to the name of the bucket you created in step 5.
 
 ...
 In your `main()` function in petfinder_data_loader.py `PetFinderDataLoader`, use the following values:
