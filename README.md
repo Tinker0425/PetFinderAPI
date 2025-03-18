@@ -1,5 +1,11 @@
 # :paw_prints: PetFinder API Data Pipeline
 
+![petfinder](docs/PetfinderAPI.png)
+
+*Image Created Using AI
+
+---
+
 [![Python](https://img.shields.io/badge/Python-3.12.6-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![API](https://img.shields.io/badge/API-PetFinder-green.svg)](https://www.petfinder.com/developers/)
@@ -10,6 +16,7 @@
 [![Transformation](https://img.shields.io/badge/Transformation-DBT-red.svg)](https://www.getdbt.com/)
 [![Visualization](https://img.shields.io/badge/Visualization-Looker-pink.svg)](https://cloud.google.com/looker)
 [![Status](https://img.shields.io/badge/Status-Active-green.svg)](https://github.com/)
+
 
 ## 📖 Evaluation Criteria as Table of Contents
 
@@ -26,17 +33,10 @@
 - [:bulb: Lessons Learned](#lessons-learned)
 
 ---
-![petfinder](docs/PetfinderAPI.png)
 
-*Image Created Using AI
----
-
-UPNEXT 
-Yes, so for my data, I need multiple days of data, so even 30k but just go back in time...I also need to 
-lower my api, maybe just pull dogs, that way i can look at all of them...or dogs vs. cats for the pie chart.
-I also would like to make how long in shelter?
-Add cluster and partitionings
-TODO - adjust my api pull to include lat lon (map) for a map and org name (my org danes vs. other danes)...and good with tags (pie chart)
+TODO - Backfill, add log, bug script is grabbing 800, which is back in time...this may lead to duplicates. Thus
+I have updated that script and will test it 3/17 and then will need my backfill for ALL data could work actually?
+Ok, need to add a catch do it doesn't keep running...look at tomorrow.
 
 https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4a255/page/oenBF
 
@@ -147,16 +147,16 @@ SELECT * FROM cleaned_data
 
 **Google Data Studio - Looker** to create and share the dashboard.
 
-
 After loading the transformed data into BigQuery, a dashboard to visualize key metrics and trends in pet adoption:
 - **Tile 1**: A pie chart showing the distribution of dogs vs. cats.
 - **Tile 2**: A time series chart showing the number of adoptions of cats and dogs time.
 
-TODO screenshot
-Ensure that your graph is easy to understand by adding references and titles.
+![graphs](looker.png)
 
-If you need a how-to for looker, go here:
+:bulb: If you need a how-to for looker, go here:
 https://www.youtube.com/watch?v=39nLTs74A3E
+
+[![](https://markdown-videos-api.jorgenkh.no/youtube/{39nLTs74A3E?si=z20nZmb3ty-8siXc})](https://youtu.be/{39nLTs74A3E?si=z20nZmb3ty-8siXc})
 
 ## :recycle: Reproducibility / Setup Instructions
 
