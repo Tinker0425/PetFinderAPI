@@ -168,6 +168,8 @@ After loading the transformed data into BigQuery, a dashboard to visualize key m
 :bulb: If you need a how-to for looker, go here:
 https://www.youtube.com/watch?v=39nLTs74A3E
 
+---
+
 ## :recycle: Reproducibility / Setup Instructions
 
 ### **API Key and Access Token Setup**
