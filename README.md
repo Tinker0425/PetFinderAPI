@@ -156,8 +156,6 @@ After loading the transformed data into BigQuery, a dashboard to visualize key m
 :bulb: If you need a how-to for looker, go here:
 https://www.youtube.com/watch?v=39nLTs74A3E
 
-[![](https://markdown-videos-api.jorgenkh.no/youtube/{39nLTs74A3E?si=z20nZmb3ty-8siXc})](https://youtu.be/{39nLTs74A3E?si=z20nZmb3ty-8siXc})
-
 ## :recycle: Reproducibility / Setup Instructions
 
 ### **API Key and Access Token Setup**
@@ -305,26 +303,24 @@ bucket_name = 'your-gcs-bucket-name'  # Replace with the name of your bucket
 - **Service Account Key**: Keep the service account JSON file secure. It's used for authenticating your application to Google Cloud services.
 
 
-
 ---
 
 ## :wrench: Technologies Used
 
-- **Google Cloud Storage (GCS)**: For storing raw data before and after processing.
 - **Python**: For writing scripts to handle data ingestion.
 - **PetFinderAPI**: Datasource
 - **Terraform**: Infrastructure as code (IaC) - Used for creating GCP Bucket and BigQuery
-- **DBT**: For performing SQL-based transformations on the data in BigQuery.
+- **Google Cloud Storage (GCS)**: For storing raw data before and after processing.
 - **BigQuery Data Warehouse**: For storing processed and transformed data in a data warehouse.
+- **DBT**: For performing SQL-based transformations on the data in BigQuery.
 - **Visualization Tools**: Google Data Studio Looker
-
 
 ---
 
 ## :bulb: Lessons Learned
 
-- **CD/CI & Github Actions**: Learned how to use yml files to run terraform and python using Github Actions
-- **Batch Processing**: Learning how to process large datasets efficiently with Spark was key to handling the PetFinder data at scale.
+- **Github Actions**: Learned how to use yml files to run terraform and python using Github Actions
+- **Batch Processing**: Learning how to process large datasets efficiently was key to handling the PetFinder data at scale.
 - **Transformation Best Practices**: Using DBT for transformations made it easier to maintain and version control SQL-based transformations, ensuring the integrity of the data.
 - **Cloud Integration**: Integrating with **Google Cloud Storage** and **BigQuery** enabled me to scale the pipeline and store data securely for analysis.
 
