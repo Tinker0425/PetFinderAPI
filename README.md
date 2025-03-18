@@ -43,26 +43,26 @@ https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4
 
 ## :question: Problem description
 
-The **problem** is the challenge of handling, processing, and visualizing pet adoption data from 
-Pet Finder API [docs](https://www.petfinder.com/developers/v2/docs/) in an automated, 
+The **problem** is the challenge of handling, processing, and visualizing pet adoption data from
+[Pet Finder API](https://www.petfinder.com/developers/v2/docs/) in an automated, 
 scalable, and efficient manner. The **solution** is an end-to-end data pipeline leveraging 
-**Python, Terraform, DBT, Google BigQuery, and Google Cloud Storage**, with automation via **GitHub Actions**.
+**Python, Terraform, DBT, Google BigQuery, and Google Cloud Storage**, with workflow automation via **GitHub Actions**.
 
 ## :building_construction: Pipeline Architecture
 
 The architecture of the data pipeline involves several components:
 
-1. **Data Ingestion**: Extracting pet adoption data from the PetFinder API using Python. Automated with Github Actions cron job.
+1. **Data Ingestion**: Extracting pet adoption data from the PetFinder API using Python. Automated with Github Actions daily batch cron job.
 2. **Storage & Processing**: Using **Google Cloud Storage (GCS) as a data lake** and **Python with Terraform** for automation.  
 3. **Data Warehousing**: Moving processed data from GCS to **Google BigQuery** using Python.  
 4. **Data Transformation**: Using **DBT** to clean, model, and optimize data by processing and transforming the data for meaningful insights using partitioning and clustering. 
 5. **Visualization**: Creating a **Google Data Studio Looker dashboard** with 2 tiles of insights on pet adoption trends.  
 6. **Automation**: Using **GitHub Actions** for automated daily batch processing.
 
-:warning: Note that the user must manually create an account for [PetFinder API](https://www.petfinder.com/developers/v2/docs/), 
-update Github Actions, and create a Google Cloud account. 
-
 ![project workflow](project.drawio.svg)
+
+:warning: Note that the user must manually create an account for [PetFinder API](https://www.petfinder.com/developers/v2/docs/), 
+add Github Secrets, and create a Google Cloud account. 
 
 ## :cloud: Cloud
 
@@ -148,8 +148,8 @@ SELECT * FROM cleaned_data
 **Google Data Studio - Looker** to create and share the dashboard.
 
 After loading the transformed data into BigQuery, a dashboard to visualize key metrics and trends in pet adoption:
-- **Tile 1**: A pie chart showing the distribution of dogs vs. cats.
-- **Tile 2**: A time series chart showing the number of adoptions of cats and dogs time.
+- **Tile 1**: A pie chart showing the distribution of species (ex. dog, cat, rabbit, etc).
+- **Tile 2**: A time series chart showing the total number of pet profiles added daily to PetFinder.
 
 ![graphs](looker.png)
 
