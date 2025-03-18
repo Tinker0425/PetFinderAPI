@@ -1,7 +1,7 @@
 # Standard imports
 import time
 import json
-from datetime import datetime, timzone
+from datetime import datetime, timezone
 import logging
 import traceback
 import os
