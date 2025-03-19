@@ -248,8 +248,8 @@ def main():
     # Fetch the initial access token
     petfinder_client.get_access_token()
 
-    start_date = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
-    end_date = (datetime.now(timezone.utc) - timedelta(days=60)).isoformat()
+    start_date = (datetime.now(timezone.utc) - timedelta(days=30)).replace(microsecond=0).isoformat()
+    end_date = (datetime.now(timezone.utc) - timedelta(days=60)).replace(microsecond=0).isoformat()
 
     pet_data = petfinder_client.fetch_data_for_date_range(start_date, end_date)
     print(f"Fetched {len(pet_data)} records from {end_date} to {start_date}")
