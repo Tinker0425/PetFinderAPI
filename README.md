@@ -34,9 +34,7 @@
 
 ---
 
-TODO - Backfill, add log, bug script is grabbing 800, which is back in time...this may lead to duplicates. Thus
-I have updated that script and will test it 3/17 and then will need my backfill for ALL data could work actually?
-Ok, need to add a catch do it doesn't keep running...look at tomorrow.
+TODO - Backfill, add log, ok, could adjust api to end for date of. Create how to set up video?
 
 https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4a255/page/oenBF
 
@@ -172,9 +170,36 @@ https://www.youtube.com/watch?v=39nLTs74A3E
 
 ---
 
+## :wrench: Technologies Used
+
+- **Python**: For writing scripts to handle data ingestion.
+- **PetFinderAPI**: Datasource
+- **Terraform**: Infrastructure as code (IaC) - Used for creating GCP Bucket and BigQuery
+- **Google Cloud Storage (GCS)**: For storing raw data before and after processing.
+- **BigQuery Data Warehouse**: For storing processed and transformed data in a data warehouse.
+- **DBT**: For performing SQL-based transformations on the data in BigQuery.
+- **Visualization Tools**: Google Data Studio Looker
+
+---
+
+## :bulb: Lessons Learned
+
+- **Github Actions**: Learned how to use yml files to run terraform and python using Github Actions
+- **Batch Processing**: Learning how to process large datasets efficiently was key to handling the PetFinder data at scale.
+- **Transformation Best Practices**: Using DBT for transformations made it easier to maintain and version control SQL-based transformations, ensuring the integrity of the data.
+- **Cloud Integration**: Integrating with **Google Cloud Storage** and **BigQuery** enabled me to scale the pipeline and store data securely for analysis.
+
+---
+
 ## :recycle: Reproducibility / Setup Instructions
 
-### :cloud: Steps to Create a Google Cloud Project
+:wave: Hi Reviewer! Here are the steps below. If you run into any issues, don't hesitate to reach out to me
+on slack @Kayla Tinker or email Kayla.Tinker425@gmail.com.
+
+:pencil: I created a more detailed 'How To' Help here:
+https://data-engineering-zoomcamp-2025-t.gitbook.io/tinker0425/final-project/how-to
+
+### :cloud: Create a Google Cloud Project
 
 :bulb: Review GCP Setup from the course if needed [here](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/01-docker-terraform/1_terraform_gcp/2_gcp_overview.md)
 
@@ -206,6 +231,8 @@ https://www.youtube.com/watch?v=39nLTs74A3E
    - Click **Create** and save the downloaded JSON key to a secure location on your machine.
    :warning: - **Service Account Key**: Keep the service account JSON file secure and DO NOT add it to github.
 
+:exclamation: I recommend keeping up your cloud browser
+
 
 ### :key: **API Key and Access Token Setup**
 
@@ -226,7 +253,8 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
 
 :warning: Make sure not to share your **API key** and **secret** publicly to avoid unauthorized access.
 
-### :fork_and_knife: **Clone/Fork This Repo in Gihub**
+
+### :fork_and_knife: **Clone/Fork This Repo in Github**
 
 1. **Fork/Clone the repository**:
    - Fork it to your GitHub account.
@@ -239,55 +267,36 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
      - `PETFINDER_API_KEY`: PetFinder API key.
      - `PETFINDER_API_ID`: PetFinder API ID.
 
-3. **Ensure dependencies are listed** in the `requirements.txt` file:
-   - Make sure the `requirements.txt` file includes all the required dependencies for the project.
-   - Install dependencies via the following command:
-     ```bash
-     pip install -r requirements.txt
-     ```
+### :runner: **You are Ready to Run!**
 
-4. **Review the README**:
-   - Go through the README for any specific environment setup or instructions related to the cloud environment and the pipeline.
+1. **Github Actions Run Terraform** 
+:warning: for initial set-up only!!
+    - Go to Github Actions in your repo
+    - Go to `Teraform GCP Deployment`
+    - Click `Run workflow` -> `Run workflow`
+    - You can then click on the event and the run to look at details
+    - Once it completes :white_check_mark: Go to Google cloud and check:
+      1. Bucket named `petfinderapi-petfinder-data`
+      2. BigQuery database named `petfinderapi / petfinder_data`
 
-5. **Wait for the Action to Run**:
-   - The scheduled GitHub Action will automatically trigger according to the defined schedule (e.g., daily at midnight UTC).
-   - Alternatively, the action can be manually triggered via the **GitHub Actions tab** in the repository.
+2. **Github Actions Daily Python Run**
+:warning: The cron job is commented out in the yml file. If you would like it to run daily, go to `` and uncomment the cron line
+   - Go to Github Actions in your repo
+   - Go to `Fetch and Upload PetFinder Data`
+   - Click `Run workflow` -> `Run workflow`
+   - You can then click on the event and the run to look at details
+   - Once it completes :white_check_mark: Go to Google cloud and check:
+     1. A csv with today's date was added to your bucket
+     2. `raw_petfinder` data in your BigQuery for today's petfinder values!
 
-...
-In your `main()` function in petfinder_data_loader.py `PetFinderDataLoader`, use the following values:
-
-```python
-credentials_file = '/path/to/your/service-account-file.json'  # Path to your Service Account JSON key
-bucket_name = 'your-gcs-bucket-name'  # Replace with the name of your bucket
-```
-
-### Additional Notes:
-- **Bucket Naming Convention**: The bucket name must be globally unique across Google Cloud. Try appending random numbers or using unique prefixes.
-- **Service Account Key**: Keep the service account JSON file secure. It's used for authenticating your application to Google Cloud services.
-
-
----
-
-## :wrench: Technologies Used
-
-- **Python**: For writing scripts to handle data ingestion.
-- **PetFinderAPI**: Datasource
-- **Terraform**: Infrastructure as code (IaC) - Used for creating GCP Bucket and BigQuery
-- **Google Cloud Storage (GCS)**: For storing raw data before and after processing.
-- **BigQuery Data Warehouse**: For storing processed and transformed data in a data warehouse.
-- **DBT**: For performing SQL-based transformations on the data in BigQuery.
-- **Visualization Tools**: Google Data Studio Looker
-
----
-
-## :bulb: Lessons Learned
-
-- **Github Actions**: Learned how to use yml files to run terraform and python using Github Actions
-- **Batch Processing**: Learning how to process large datasets efficiently was key to handling the PetFinder data at scale.
-- **Transformation Best Practices**: Using DBT for transformations made it easier to maintain and version control SQL-based transformations, ensuring the integrity of the data.
-- **Cloud Integration**: Integrating with **Google Cloud Storage** and **BigQuery** enabled me to scale the pipeline and store data securely for analysis.
-
----
+3. **Github Actions Daily DBT**
+:warning: The cron job is commented out in the yml file. If you would like it to run daily, go to `` and uncomment the cron line
+   - Go to Github Actions in your repo
+   - Go to `Run dbt Transformations`
+   - Click `Run workflow` -> `Run workflow`
+   - You can then click on the event and the run to look at details
+   - Once it completes :white_check_mark: Go to Google cloud and check in BigQuery:
+     1. Created 'active_pets', 'stg_petfinder', and partitioned and clustered 'transformed_petfinder'
 
 ## License
 
