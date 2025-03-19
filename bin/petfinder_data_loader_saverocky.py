@@ -18,7 +18,7 @@ import pandas as pd
 
 # NEW
 # Constants
-MAX_REQUESTS_PER_DAY = 10  # Limit to 950 requests to stay safe
+MAX_REQUESTS_PER_DAY = 20  # Limit to 950 requests to stay safe
 PAGE_LIMIT = 100            # Max allowed records per request
 SLEEP_TIME = 2              # Wait 2 seconds between requests to prevent hitting limits
 
@@ -32,6 +32,13 @@ class PetfinderAPIClient:
         self.token_expiration = None
         self.base_url = "https://api.petfinder.com/v2/animals"
         self.request_count = 0  # Track API requests
+
+    def format_date(self, date_str):
+        """Convert a date string to Petfinder API's required ISO 8601 format."""
+        try:
+            return datetime.strptime(date_str, "%Y-%m-%d").strftime("%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            raise ValueError("Invalid date format. Use YYYY-MM-DD.")
 
     def get_access_token(self):
         """Request and retrieve the access token from Petfinder API."""
@@ -260,8 +267,8 @@ def main():
     # Fetch the initial access token
     petfinder_client.get_access_token()
 
-    # Start from 6 months ago
-    timeline = (datetime.now(timezone.utc) - timedelta(days=5)).isoformat()
+    # Start from 10 days ago
+    timeline = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
 
     # Use a lower number of workers for deep backfill
     while True:
