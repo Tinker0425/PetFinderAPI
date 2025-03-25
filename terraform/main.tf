@@ -15,7 +15,8 @@ provider "google" {
 
 # Create GCS Bucket
 resource "google_storage_bucket" "petfinder_bucket" {
-  name          = "petfinderapi-petfinder-data"
+  #name          = "petfinderapi-petfinder-data"
+  name          = var.bucket
   location      = var.region
   force_destroy = true
 }
@@ -32,3 +33,4 @@ variable "gcs_credentials" {}
 variable "region" {
   default = "us-central1"
 }
+variable "bucket" {}

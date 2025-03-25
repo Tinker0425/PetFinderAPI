@@ -30,6 +30,7 @@ jobs:
       - name: Apply Terraform Configuration
         env:
           TF_VAR_gcs_credentials: ${{ secrets.GCS_CREDENTIALS }}
+          TF_VAR_bucket: ${{ secrets.BUCKET }}
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
         run: cd terraform && terraform apply -auto-approve
 
