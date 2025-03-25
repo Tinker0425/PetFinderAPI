@@ -22,19 +22,19 @@
 
 **Based on Project rubric**
 - [:question: Problem Description](#question-problem-description)
-- [:building_construction: Pipeline Architecture](#pipeline-architecture)
+- [:building_construction: Pipeline Architecture](#building_construction-pipeline-architecture)
 - [:cloud: Cloud](#cloud-cloud)
 - [:violin: Batch / Workflow Orchestration](#violin-batch--workflow-orchestration)
-- [:file_cabinet: Data Warehouse](#data-warehouse)
-- [:arrows_counterclockwise: Transformations](#transformations)
-- [:rocket: Dashboard Visualization](#dashboard)
-- [:recycle: Reproducibility / Setup Instructions](#reproducibility)
-- [:wrench: Technologies Used](#technologies-used)
-- [:bulb: Lessons Learned](#lessons-learned)
+- [:file_cabinet: Data Warehouse](#file_cabinet-data-warehouse)
+- [:arrows_counterclockwise: Transformations](#arrows_counterclockwise-transformations-)
+- [:rocket: Dashboard Visualization](#rocket-Dashboard-visualization)
+- [:wrench: Technologies Used](#wrench-technologies-used)
+- [:bulb: Lessons Learned](#bulb-lessons-learned)
+- [:recycle: Reproducibility / Setup Instructions](#recycle-reproducibility--setup-instructions)
 
 ---
 
-TODO - Backfill, add log, ok, could adjust api to end for date of. Create how to set up video?
+TODO - Backfill, add log, ok, could adjust api to end for date of. Add how-to to gitbook! Add subsections.
 
 https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4a255/page/oenBF
 
@@ -205,10 +205,8 @@ https://data-engineering-zoomcamp-2025-t.gitbook.io/tinker0425/final-project/how
 
 1. **Sign in to Google Cloud Console**:
    - Visit the [Google Cloud Console](https://console.cloud.google.com/).
-   - Sign in with your Google account. If you don't have one, you will need to create an account.
 
 2. **Create a Google Cloud Project**:
-   - If you don't have a project yet, you'll need to create one.
      1. In the Cloud Console, click on the **project drop-down** at the top of the page.
      2. Click **New Project**.
      3. Name your project `PetFinderAPI`
@@ -282,19 +280,14 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
 2. **Github Actions Daily Python Run**
 :warning: The cron job is commented out in the yml file. If you would like it to run daily, go to `` and uncomment the cron line
    - Go to Github Actions in your repo
-   - Go to `Fetch and Upload PetFinder Data`
-   - Click `Run workflow` -> `Run workflow`
-   - You can then click on the event and the run to look at details
+   - Go to `Fetch and Upload PetFinder Data` & Run
    - Once it completes :white_check_mark: Go to Google cloud and check:
      1. A csv with today's date was added to your bucket
      2. `raw_petfinder` data in your BigQuery for today's petfinder values!
 
 3. **Github Actions Daily DBT**
 :warning: The cron job is commented out in the yml file. If you would like it to run daily, go to `` and uncomment the cron line
-   - Go to Github Actions in your repo
-   - Go to `Run dbt Transformations`
-   - Click `Run workflow` -> `Run workflow`
-   - You can then click on the event and the run to look at details
+   - Go to `Run dbt Transformations` & Run
    - Once it completes :white_check_mark: Go to Google cloud and check in BigQuery:
      1. Created 'active_pets', 'stg_petfinder', and partitioned and clustered 'transformed_petfinder'
 
