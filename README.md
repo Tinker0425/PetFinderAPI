@@ -257,8 +257,8 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
    - Go to the repository's **Settings** > **Secrets and variables** > **Actions**.
    - Add the following secrets:
      - `GCS_CREDENTIALS`: Google Cloud credentials file (as a JSON string).
-     - `PETFINDER_API_KEY`: PetFinder API key.
-     - `PETFINDER_API_ID`: PetFinder API ID.
+     - `PETFINDER_CLIENT_SECRET`: PetFinder API key.
+     - `PETFINDER_CLIENT_ID`: PetFinder API ID.
 
 ### :runner: **You are Ready to Run!**
 
