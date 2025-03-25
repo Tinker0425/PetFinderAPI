@@ -26,7 +26,7 @@
 - [:cloud: Cloud](#cloud-cloud)
 - [:violin: Batch / Workflow Orchestration](#violin-batch--workflow-orchestration)
 - [:file_cabinet: Data Warehouse](#file_cabinet-data-warehouse)
-- [:arrows_counterclockwise: Transformations](#arrows_counterclockwise-transformations-)
+- [:arrows_counterclockwise: Transformations](#arrows_counterclockwise-transformations)
 - [:rocket: Dashboard Visualization](#rocket-Dashboard-visualization)
 - [:wrench: Technologies Used](#wrench-technologies-used)
 - [:bulb: Lessons Learned](#bulb-lessons-learned)
