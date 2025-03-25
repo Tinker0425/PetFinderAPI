@@ -203,21 +203,16 @@ https://data-engineering-zoomcamp-2025-t.gitbook.io/tinker0425/final-project/how
 
 :bulb: Review GCP Setup from the course if needed [here](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/01-docker-terraform/1_terraform_gcp/2_gcp_overview.md)
 
-1. **Sign in to Google Cloud Console**:
-   - Visit the [Google Cloud Console](https://console.cloud.google.com/).
+1. **Create a Google Cloud Project**:
+    - Visit the [Google Cloud Console](https://console.cloud.google.com/)
+    - Name your project `PetFinderAPI`
 
-2. **Create a Google Cloud Project**:
-     1. In the Cloud Console, click on the **project drop-down** at the top of the page.
-     2. Click **New Project**.
-     3. Name your project `PetFinderAPI`
-     4. Click **Create**.
-
-3. **Enable Google Cloud Storage API**:
+2. **Enable Google Cloud Storage API**:
    - In the Cloud Console, navigate to the **APIs & Services** > **Library**.
    - Search for **Google Cloud Storage** in the search bar and select **Google Cloud Storage JSON API**.
    - Click **Enable** to enable the API for your project.
 
-4. **Create a Service Account**:
+3. **Create a Service Account**:
    - Navigate to **IAM & Admin** > **Service Accounts** in the Google Cloud Console.
    - Click **Create Service Account**.
      1. **Service Account Name**: Enter a name `petfinder-api-access`, create + continue
@@ -252,9 +247,9 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
 :warning: Make sure not to share your **API key** and **secret** publicly to avoid unauthorized access.
 
 
-### :fork_and_knife: **Clone/Fork This Repo in Github**
+### :fork_and_knife: **Fork This Repo in Github**
 
-1. **Fork/Clone the repository**:
+1. **Fork the repository**:
    - Fork it to your GitHub account.
    - This is mandatory, as I use Github Actions for Workflow
 
