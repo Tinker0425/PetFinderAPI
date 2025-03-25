@@ -1,7 +1,8 @@
 name: One-Time Backfill
 
-on:
-  workflow_dispatch:  # Allows manual trigger
+# OFF for testing
+#on:
+#  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   run-script:
