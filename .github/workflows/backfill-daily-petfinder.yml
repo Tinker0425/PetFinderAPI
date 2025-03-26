@@ -1,8 +1,7 @@
-name: One-Time Backfill
+name: Backfill By Date Range
 
-# OFF for testing
-#on:
-#  workflow_dispatch:  # Allows manual trigger
+on:
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   run-script:
@@ -28,5 +27,6 @@ jobs:
           PETFINDER_CLIENT_ID: ${{ secrets.PETFINDER_CLIENT_ID }}
           PETFINDER_CLIENT_SECRET: ${{ secrets.PETFINDER_CLIENT_SECRET }}
           GCS_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
-        run: python bin/petfinder_data_loader_saverocky.py
+          BUCKET: ${{ secrets.BUCKET }}
+        run: python bin/petfinder_data_loader_backfill.py
 
