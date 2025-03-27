@@ -17,7 +17,7 @@ import pandas as pd
 
 
 # Constants
-MAX_REQUESTS_PER_DAY = 700
+MAX_REQUESTS_PER_DAY = 100
 PAGE_LIMIT = 100            # Max allowed records per request
 SLEEP_TIME = 2              # Wait 2 seconds between requests to prevent hitting limits
 
@@ -168,6 +168,12 @@ class PetFinderDataLoader:
             }
             records.append(record)
 
+        # df = pd.DataFrame(records)
+        #
+        # # ✅ Remove duplicate records based on 'id'
+        # df = df.drop_duplicates(subset=['id'], keep='last')
+
+        # return df
         return pd.DataFrame(records)
 
     def save_csv_to_gcs(self, df, blob_name):
