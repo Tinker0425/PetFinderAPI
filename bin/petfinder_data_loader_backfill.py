@@ -85,7 +85,7 @@ class PetfinderAPIClient:
 
         # Calculate the date and time for yesterday
         # after = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        before = (datetime.now(timezone.utc) - timedelta(days=80)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        before = (datetime.now(timezone.utc) - timedelta(days=97)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
         headers = {"Authorization": f"Bearer {self.access_token}"}
