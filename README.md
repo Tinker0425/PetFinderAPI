@@ -175,6 +175,12 @@ After loading the transformed data into BigQuery, a dashboard to visualize key m
 
 ![graphs](looker.png)
 
+---
+
+![Dashboard](dashboard.png)
+
+---
+
 :eyes: See my full dashboard [here](https://lookerstudio.google.com/s/r_UWAUGaVC8)
 
 :bulb: If you need a how-to for looker, go here:
@@ -288,7 +294,6 @@ you need to obtain your **API key** and **API secret** from PetFinder. Here's ho
 
 2. **Github Actions Daily Python Run**
 :warning: The cron job is commented out in the yml file. If you would like it to run daily, go to `` and uncomment the cron line
-   - Go to Github Actions in your repo
    - Go to `Fetch and Upload PetFinder Data` & Run
    - Once it completes :white_check_mark: Go to Google cloud and check:
      1. A csv with today's date was added to your bucket
