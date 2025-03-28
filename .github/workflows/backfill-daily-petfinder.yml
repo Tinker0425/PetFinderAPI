@@ -6,7 +6,7 @@ on:
 jobs:
   run-script:
     runs-on: ubuntu-latest
-    timeout-minutes: 3  # Auto-cancel if the job runs too long
+    timeout-minutes: 6  # Auto-cancel if the job runs too long
 
     steps:
       - name: Checkout repository

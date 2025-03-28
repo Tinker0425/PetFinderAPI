@@ -17,7 +17,7 @@ import pandas as pd
 
 
 # Constants
-MAX_REQUESTS_PER_DAY = 100
+MAX_REQUESTS_PER_DAY = 600
 PAGE_LIMIT = 100            # Max allowed records per request
 SLEEP_TIME = 2              # Wait 2 seconds between requests to prevent hitting limits
 
@@ -85,7 +85,7 @@ class PetfinderAPIClient:
 
         # Calculate the date and time for yesterday
         # after = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        before = (datetime.now(timezone.utc) - timedelta(days=97)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        before = (datetime.now(timezone.utc) - timedelta(days=99)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
         headers = {"Authorization": f"Bearer {self.access_token}"}
