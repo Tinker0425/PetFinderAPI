@@ -34,17 +34,21 @@
 
 ---
 
-TODO - Backfill, add log, ok, could adjust api to end for date of. Add how-to to gitbook! Add subsections.
-
-https://lookerstudio.google.com/embed/reporting/eab4cbae-a022-470a-88dc-15de1ab4a255/page/oenBF
-
-
 ## :question: Problem description
 
 The **problem** is the challenge of handling, processing, and visualizing pet adoption data from
 [Pet Finder API](https://www.petfinder.com/developers/v2/docs/) in an automated, 
 scalable, and efficient manner. The **solution** is an end-to-end data pipeline leveraging 
 **Python, Terraform, DBT, Google BigQuery, and Google Cloud Storage**, with workflow automation via **GitHub Actions**.
+I volunteer with local pet rescues who use PetFinder daily and wanted to learn more about the data available. 
+Here are some of my initial questions:
+
+- :question: What are the top 5 orange cat names on PetFinder?
+- :question: Is there a time of year when more adoptable pets are added to the site?
+- :question: What additional species are on PetFinder besides cats & dogs?
+- :question: What are the details of the adoptable dogs from Save Rocky the Great Dane Rescue?
+
+---
 
 ## :building_construction: Pipeline Architecture
 
@@ -62,11 +66,15 @@ The architecture of the data pipeline involves several components:
 :warning: Note that the user must manually create an account for [PetFinder API](https://www.petfinder.com/developers/v2/docs/), 
 add Github Secrets, and create a Google Cloud account. 
 
+---
+
 ## :cloud: Cloud
 
 This project utilizes Google Cloud Platform (GCP) services including Google Cloud Storage (GCS) Data Lake
 and BigQuery Data Warehouse for data storage and processing. This project uses Terraform `Infrastructure as Code (IaC)` to automate 
 the setup and management of cloud resources including the GCP bucket for the data lake.
+
+---
 
 ## :violin: Batch / Workflow orchestration
 
@@ -89,10 +97,14 @@ Inside the workflow, jobs are defined with steps that execute scripts, run comma
 This daily batch job fetches data from an API, process it, and stores the results in google cloud storage. 
 The automation ensures that tasks run consistently without manual intervention.
 
+---
+
 ## :file_cabinet: Data warehouse
 
 This project uses BigQuery for the data warehouse and the tables are partitioned and clustered. For the petfinder
 dataset, I partition by processed date, and then cluster by species, age group, and state.
+
+---
 
 ## :arrows_counterclockwise: Transformations 
 
