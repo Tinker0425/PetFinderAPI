@@ -17,7 +17,7 @@ import pandas as pd
 
 
 # Constants
-MAX_REQUESTS_PER_DAY = 500
+MAX_REQUESTS_PER_DAY = 100
 PAGE_LIMIT = 100            # Max allowed records per request
 SLEEP_TIME = 2              # Wait 2 seconds between requests to prevent hitting limits
 
@@ -84,12 +84,12 @@ class PetfinderAPIClient:
             return []
 
         # Calculate the date and time for yesterday
-        # after = (datetime.now(timezone.utc) - timedelta(days=32)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        before = (datetime.now(timezone.utc) - timedelta(days=303)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        after = (datetime.now(timezone.utc) - timedelta(days=87)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        # before = (datetime.now(timezone.utc) - timedelta(days=303)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        params = {"limit": PAGE_LIMIT, "page": page, "before": before}
+        params = {"limit": PAGE_LIMIT, "page": page, "after": after}
         response = requests.get(self.base_url, headers=headers, params=params)
         self.request_count += 1
         time.sleep(SLEEP_TIME)
@@ -168,13 +168,13 @@ class PetFinderDataLoader:
             }
             records.append(record)
 
-        # df = pd.DataFrame(records)
-        #
-        # # ✅ Remove duplicate records based on 'id'
-        # df = df.drop_duplicates(subset=['id'], keep='last')
+        df = pd.DataFrame(records)
 
-        # return df
-        return pd.DataFrame(records)
+        # ✅ Remove duplicate records based on 'id'
+        df = df.drop_duplicates(subset=['id'], keep='last')
+
+        return df
+        # return pd.DataFrame(records)
 
     def save_csv_to_gcs(self, df, blob_name):
         """Upload CSV to Google Cloud Storage."""
